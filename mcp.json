@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ]
+    },
+    "limitless": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-limitless"
+      ],
+      "env": {
+        "LIMITLESS_API_KEY": "{LIMITLESS_API_KEY}"
+      }
+    },
+    "teleclaude": {
+      "type": "stdio",
+      "command": "python3",
+      "args": [
+        "~/Documents/Workspace/morriz/teleclaude/bin/mcp-wrapper.py"
+      ]
+    }
+  }
+}

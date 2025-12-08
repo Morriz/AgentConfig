@@ -1,0 +1,14 @@
+{
+  "claude": {
+    "commit": "commit-commands:commit",
+    "review": "pr-review-toolkit:review-pr all"
+  },
+  "codex": {
+    "commit": "prompts:commit",
+    "review": "review"
+  },
+  "gemini": {
+    "commit": "commit-agent:commit",
+    "review": "review"
+  }
+}
