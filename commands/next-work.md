@@ -26,10 +26,16 @@ ARGUMENT GIVEN: "$ARGUMENTS"
 **If NO subject provided**:
 
 1. Read `todos/roadmap.md`
-2. Find the item marked as in-progress (`- [>]`)
-3. If no in-progress item, find first unchecked item (`- [ ]`) that is clear to you (mark `[~]` if unsure and ask for input)
-4. Extract description and generate slug
-5. Use that as the subject
+2. **Skip blocked items** (`- [B]`) — these have external dependencies preventing progress
+3. Find the item marked as in-progress (`- [>]`)
+4. If no in-progress item, find first unchecked item (`- [ ]`) that:
+   - Is NOT marked `[B]` (blocked)
+   - Does NOT have `**DEPENDS:**` pointing to a `[B]` item
+   - Is clear to you (mark `[~]` if unsure and ask for input)
+5. Extract description and generate slug
+6. Use that as the subject
+
+**Blocked item format**: `- [B] Item description — BLOCKED: reason`
 
 ## Step 3: Create or Switch to Worktree
 
@@ -258,7 +264,8 @@ If neither requirements nor a clear roadmap item exist (or info is unclear), run
 - **Commit in worktree**: Create local commits while in worktree (no push yet)
 - **Push after merge**: Only push after merging to main
 - **Check dependencies**: Always verify `**DEPENDS:**` requirements are met
-- **Update roadmap**: Mark items in-progress (`[>]`) and complete (`[x]`)
+- **Skip blocked items**: Items marked `[B]` have external blockers — do not attempt them
+- **Update roadmap**: Mark items in-progress (`[>]`), complete (`[x]`), or blocked (`[B]`)
 - **Ask questions**: If requirements unclear, ask before implementing
 
 ## Work Session Template
