@@ -5,6 +5,18 @@ argument-hint: "[subject]"
 
 You are now in **requirements generation mode**. Follow these steps to create a requirements document:
 
+## Step 0: Verify Prerequisites
+
+**Before proceeding, check:**
+
+1. **Open bugs?** Read `todos/bugs.md` for unchecked items (`- [ ]`)
+   - If bugs exist: "⚠️ Open bugs found. Fix bugs first via `/{AGENT_PREFIX}next-work` or acknowledge to continue."
+   - Wait for user confirmation before proceeding
+
+2. **Called from /next-work?** If user jumped directly here, remind them:
+   - "💡 For the full workflow (bugs → worktree → requirements → implementation → review → merge), run `/{AGENT_PREFIX}next-work` instead."
+   - Continue if user confirms they want requirements only
+
 ## Step 1: Determine Subject
 
 SUBJECT GIVEN: "$ARGUMENTS"

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env .venv/bin/python
 import argparse
 import json
 import os
@@ -10,10 +10,10 @@ import frontmatter
 def get_command_map_substitutions(command_map, agent_name):
     """
     Returns a dictionary of substitutions for COMMAND_MAP placeholders
-    for a specific agent.
+    for a specific agent. Returns empty dict if no command map provided.
     """
     subs = {}
-    if agent_name in command_map:
+    if command_map and agent_name in command_map:
         for command, value in command_map[agent_name].items():
             subs[f"{{COMMAND_MAP.{command}}}"] = value
     return subs
@@ -76,8 +76,11 @@ def main():
         shutil.rmtree(dist_dir)
     os.makedirs(dist_dir)
 
-    with open("command-map.json", "r") as f:
-        command_map = json.load(f)
+    # Load command map if it exists (optional)
+    command_map = {}
+    if os.path.exists("command-map.json"):
+        with open("command-map.json", "r") as f:
+            command_map = json.load(f)
 
     master_agents_file = "AGENTS.master.md"
     master_commands_dir = "commands.master"

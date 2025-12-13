@@ -72,25 +72,65 @@ You receive notifications when the target AI:
 - Opus (default): anything requiring judgment
 - Sonnet: only with complete requirements + implementation plan AND explicit user request
 
+## Architect-Builder Paradigm
+
+Two distinct roles for AI work:
+
+### Architect Role
+Strategic thinking: requirements, architecture, use cases, roadmap grooming.
+- Run `/{AGENT_PREFIX}prime-architect` to load context
+- Creates requirements, updates docs, prepares work
+- Delegates to Builders when items are ready
+
+### Builder Role
+Tactical execution: implement features, fix bugs, write tests.
+- Run `/{AGENT_PREFIX}next-work` to find and implement next item
+- Self-contained workflow: requirements → plan → code → test → commit
+- Escalates to Architect if design issues found
+
+### Role Detection
+
+Detect role based on the request:
+- **Architect triggers:** "Let's discuss...", "How should we...", requirements, architecture, roadmap
+- **Builder triggers:** "Implement...", "Build...", "Fix...", specific files, code changes
+
+When unsure, ask: "Are we discussing architecture or implementing a task?"
+
 ## Orchestrating Work (AI-to-AI)
 
-When delegating work to another AI session via TeleClaude:
+**Be concise.** The process is embedded. Both AIs know the workflow.
 
-**Just say `/{AGENT_PREFIX}next-work`.** That's it.
+### Delegating to Builders
 
-The `/{AGENT_PREFIX}next-work` command is self-contained - it finds the next roadmap item, creates requirements if needed, creates implementation plans, executes all groups, runs tests, and commits. The worker AI knows the full workflow.
+When roadmap has pending items:
+```
+teleclaude__start_session(message="/{AGENT_PREFIX}next-work")
+```
+That's it. The Builder knows the full workflow.
+
+### Empty Roadmap
+
+When no pending items remain:
+1. Run `/{AGENT_PREFIX}sync-todos` to verify nothing was missed
+2. If still empty, spawn an Architect peer:
+   ```
+   teleclaude__start_session(message="/{AGENT_PREFIX}prime-architect then brainstorm what's next")
+   ```
+Two Architects discuss and populate the roadmap together.
+
+### Communication Rules
 
 **Do NOT:**
-- Explain what `/{AGENT_PREFIX}next-work` does
-- List the steps it should follow
+- Explain what commands do
+- List steps the other AI should follow
 - Micromanage the process
 
 **Do:**
-- `teleclaude__start_session` with message: "Run `/{AGENT_PREFIX}next-work`"
-- Wait for completion notification
-- Check results with `get_session_data`
-- If incomplete, send: "Continue with `/{AGENT_PREFIX}next-work`"
-- When done, end session and start fresh for next item
+- Trust the other AI knows the workflow
+- Give minimal instruction: `/{AGENT_PREFIX}next-work` or `/{AGENT_PREFIX}prime-architect`
+- Wait for completion, check results with `get_session_data`
+- If incomplete, send: "Continue"
+- When done, end session and start fresh
 
 ## Requirements for writing code:
 
