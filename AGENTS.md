@@ -84,6 +84,7 @@ Strategic thinking: requirements, architecture, use cases, roadmap grooming.
 
 ### Builder Role
 Tactical execution: implement features, fix bugs, write tests.
+- Run `/prime-builder` to load context
 - Run `/next-work` to find and implement next item
 - Self-contained workflow: requirements → plan → code → test → commit
 - Escalates to Architect if design issues found
