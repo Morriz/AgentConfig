@@ -68,10 +68,6 @@ You receive notifications when the target AI:
 3. Unsubscribe or end the session
 4. Start fresh session for continued work
 
-**Model selection:**
-- Opus (default): anything requiring judgment
-- Sonnet: only with complete requirements + implementation plan AND explicit user request
-
 ## Architect-Builder Paradigm
 
 Two distinct roles for AI work:
@@ -103,21 +99,13 @@ When unsure, ask: "Are we discussing architecture or implementing a task?"
 
 ### Delegating to Builders
 
-When roadmap has pending items:
-```
-teleclaude__start_session(message="/next-work")
-```
-That's it. The Builder knows the full workflow.
+When roadmap has pending items run `teleclaude__start_session(message="/next-work")`. That's it. The Builder knows the full workflow.
 
 ### Empty Roadmap
 
 When no pending items remain:
 1. Run `/sync-todos` to verify nothing was missed
-2. If still empty, spawn an Architect peer:
-   ```
-   teleclaude__start_session(message="/prime-architect then brainstorm what's next")
-   ```
-Two Architects discuss and populate the roadmap together.
+2. If still empty, spawn an Architect peer: `teleclaude__start_session(message="/prime-architect then brainstorm what's next")`. Two Architects discuss and populate the roadmap together.
 
 ### Communication Rules
 
@@ -135,11 +123,11 @@ Two Architects discuss and populate the roadmap together.
 
 ## Requirements for writing code:
 
-@~/.agents/docs/development/coding-directives.md
+Read @~/.agents/docs/development/coding-directives.md
 
 ## Requirements for writing tests:
 
-~/.agents/docs/development/testing-directives.md
+Read @~/.agents/docs/development/testing-directives.md
 
 ## CRITICAL RULES (ADHERE AT ALL COSTS!)
 

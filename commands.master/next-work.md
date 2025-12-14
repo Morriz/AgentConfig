@@ -218,10 +218,10 @@ If neither requirements nor a clear roadmap item exist (or info is unclear), run
 ### 8.2 Merge to Main
 
 1. If a PR exists for `{subject-slug}`, pause after opening it: poll briefly for Copilot review activity; if it starts, wait for it to finish and handle any feedback before merging; if no activity within the window, continue.
-1. Switch to project root: `cd ../..`
-2. Checkout main: `git checkout main`
-3. Merge: `git merge {subject-slug}`
-4. Push: `git push origin main`
+2. Switch to project root: `cd ../..`
+3. Checkout main: `git checkout main`
+4. Merge: `git merge {subject-slug}`
+5. Push: `git push origin main`
 
 ### 8.3 Post-Merge (on main)
 

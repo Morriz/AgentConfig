@@ -218,25 +218,14 @@ def main() -> None:
             if agent_name == "agents":
                 continue  # Skip deploying the local "agents" files
 
-            if not os.path.isdir(config["check_dir"]):
-                continue
-
             print(f"Deploying {agent_name}...")
 
-            # Deploy master file
-            shutil.copy(config["master_dest"], config["deploy_master_dest"])
+            # Merge the full generated tree into the target (cp -R dist/<agent>/* ~/.<agent>/)
+            target_root = config["check_dir"]
+            os.makedirs(target_root, exist_ok=True)
 
-            # Deploy command files
-            deploy_commands_dir = config["deploy_commands_dest"]
-            if not os.path.exists(deploy_commands_dir):
-                os.makedirs(deploy_commands_dir)
-
-            source_commands_dir = config["commands_dest_dir"]
-            for f in os.listdir(source_commands_dir):
-                shutil.copy(
-                    os.path.join(source_commands_dir, f),
-                    os.path.join(deploy_commands_dir, f),
-                )
+            dist_agent_root = os.path.dirname(config["master_dest"])
+            shutil.copytree(dist_agent_root, target_root, dirs_exist_ok=True)
 
         print("Deployment complete.")
 
