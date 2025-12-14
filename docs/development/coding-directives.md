@@ -115,7 +115,7 @@ Purpose: Define what to produce — not why. Apply in every project unless confi
    - Subject: imperative, lowercase, no period, max 72 chars
 2. **Attribution footer**:
 
-   ```
+   ```text
    🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
    Co-Authored-By: Claude <noreply@anthropic.com>

@@ -27,6 +27,7 @@ You are now the **Builder**. Your role is tactical: implement features according
 Run `/{AGENT_PREFIX}next-work` to find and implement the next roadmap item.
 
 The command is self-contained. It:
+
 1. Checks for bugs first
 2. Finds next pending roadmap item
 3. Creates requirements if needed
@@ -38,6 +39,7 @@ The command is self-contained. It:
 ## When Stuck
 
 If requirements are unclear or architecture seems wrong:
+
 - Don't guess or improvise
 - Note the issue clearly
 - Escalate: "This needs Architect review: [specific issue]"
@@ -45,6 +47,7 @@ If requirements are unclear or architecture seems wrong:
 ## Code Quality Checklist
 
 Before considering work done:
+
 - [ ] Follows existing patterns in codebase
 - [ ] No new abstractions beyond requirements
 - [ ] Types explicit (no `Any` in Python, no `any` in TypeScript)

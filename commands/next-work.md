@@ -101,7 +101,7 @@ If neither requirements nor a clear roadmap item exist (or info is unclear), run
 
 2. **Execute parallel tasks**:
 
-   ```
+   ```text
    If multiple tasks in group are marked **PARALLEL**:
    - Create separate tool calls for each parallel task
    - Execute all tool calls in a single message
@@ -173,15 +173,15 @@ If neither requirements nor a clear roadmap item exist (or info is unclear), run
 
 **For each auto-fixable issue**:
 
-2. Apply fix using appropriate tools (Edit/Write)
-3. Run linter and tests: `make lint && make test` (or `(pnpm|npm run|bun) test`)
-4. If tests pass: continue to next fix
-5. If tests fail: debug and retry
+1. Apply fix using appropriate tools (Edit/Write)
+2. Run linter and tests: `make lint && make test` (or `(pnpm|npm run|bun) test`)
+3. If tests pass: continue to next fix
+4. If tests fail: debug and retry
 
 **After all fixes applied**:
 
-6. **Mark checkbox complete**: Update `- [>] Review feedback handled` → `- [x]` in `todos/{subject-slug}/implementation-plan.md`
-7. **Commit**: `git add -A && git commit -m "fix: address review findings"`
+1. **Mark checkbox complete**: Update `- [>] Review feedback handled` → `- [x]` in `todos/{subject-slug}/implementation-plan.md`
+2. **Commit**: `git add -A && git commit -m "fix: address review findings"`
 
 ### 7.5 Quality Gate
 
@@ -281,34 +281,34 @@ For each work session:
 
 **Per task completion**:
 
-7. Run linter and tests
-8. Update checkbox in implementation-plan.md
-9. Commit (one commit with code + checkbox)
+1. Run linter and tests
+2. Update checkbox in implementation-plan.md
+3. Commit (one commit with code + checkbox)
 
 **After all implementation tasks (Group 5: Review)**:
 
-10. Verify requirements alignment (Step 7.1)
-11. Mark "Review created" in-progress → run `/next-review` → complete + commit
-12. Mark "Review feedback handled" in-progress → fix issues → complete + commit
-13. Quality gate check (Step 7.5)
+1. Verify requirements alignment (Step 7.1)
+2. Mark "Review created" in-progress → run `/next-review` → complete + commit
+3. Mark "Review feedback handled" in-progress → fix issues → complete + commit
+4. Quality gate check (Step 7.5)
 
 **Group 6: Pre-merge (in worktree)**:
 
-14. Mark "Tests pass locally" in-progress → test → complete
-15. Mark "All Groups 1-5 complete" in-progress → verify → complete
-16. Commit pre-merge checkboxes
+1. Mark "Tests pass locally" in-progress → test → complete
+2. Mark "All Groups 1-5 complete" in-progress → verify → complete
+3. Commit pre-merge checkboxes
 
 **Group 6: Merge**:
 
-17. Switch to main, merge, push
+1. Switch to main, merge, push
 
 **Group 6: Post-merge (on main)**:
 
-18. Mark "Merged to main" complete + commit
-19. Mark "Deployment verified" in-progress → verify → complete + commit
-20. Mark "Worktree cleaned up" in-progress → cleanup → complete + commit
-21. Mark "Roadmap item complete" in-progress → update roadmap → complete + commit
-22. Push final changes
+1. Mark "Merged to main" complete + commit
+2. Mark "Deployment verified" in-progress → verify → complete + commit
+3. Mark "Worktree cleaned up" in-progress → cleanup → complete + commit
+4. Mark "Roadmap item complete" in-progress → update roadmap → complete + commit
+5. Push final changes
 
 ## Error Handling
 

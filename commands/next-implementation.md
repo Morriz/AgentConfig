@@ -202,7 +202,7 @@ When all Group 6 checkboxes are complete, this item is done. The roadmap update 
 
 Report to user:
 
-```
+```text
 ✅ Implementation plan created: todos/{subject-slug}/implementation-plan.md
 
 📋 Total groups: {count}

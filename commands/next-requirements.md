@@ -152,7 +152,7 @@ If subject came from roadmap:
 
 Report to user:
 
-```
+```text
 ✅ Requirements created: todos/{subject-slug}/requirements.md
 
 📋 Subject: {subject}

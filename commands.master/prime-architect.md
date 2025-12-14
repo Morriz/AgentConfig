@@ -40,7 +40,7 @@ Use Glob to discover what docs exist: `glob docs/**/*.md`. The exact filenames v
 
 When roadmap has pending items ready for implementation:
 
-```
+```bash
 teleclaude__start_session(message="/{AGENT_PREFIX}next-work")
 ```
 
@@ -51,16 +51,19 @@ That's it. The Builder knows the full workflow. Don't explain, don't micromanage
 When no pending items remain:
 
 1. **First, sync to verify nothing was missed:**
-   ```
+
+   ```bash
    /{AGENT_PREFIX}sync-todos
    ```
 
 2. **If still empty, spawn an Architect peer for brainstorming:**
-   ```
+
+   ```bash
    teleclaude__start_session(message="/{AGENT_PREFIX}prime-architect then brainstorm what's next")
    ```
 
 Two Architects discuss together:
+
 - Review architecture docs for gaps
 - Identify missing features
 - Consider technical debt
