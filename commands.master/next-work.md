@@ -217,6 +217,7 @@ If neither requirements nor a clear roadmap item exist (or info is unclear), run
 
 ### 8.2 Merge to Main
 
+1. If a PR exists for `{subject-slug}`, pause after opening it: poll briefly for Copilot review activity; if it starts, wait for it to finish and handle any feedback before merging; if no activity within the window, continue.
 1. Switch to project root: `cd ../..`
 2. Checkout main: `git checkout main`
 3. Merge: `git merge {subject-slug}`
@@ -234,18 +235,24 @@ If neither requirements nor a clear roadmap item exist (or info is unclear), run
 7. **Mark checkbox complete**: `- [>]` → `- [x]`
 8. **Commit**: `git add -A && git commit -m "docs: mark deployment verified"`
 
-9. **Mark checkbox in-progress**: `- [ ] Worktree cleaned up` → `- [>]`
-10. Run `/{AGENT_PREFIX}remove-worktree {subject-slug}`
-11. Verify with `/{AGENT_PREFIX}list-worktrees`
-12. **Mark checkbox complete**: `- [>]` → `- [x]`
-13. **Commit**: `git add -A && git commit -m "docs: mark worktree cleanup complete"`
+9. Log and archive delivery before cleanup:
+   - Determine next archive prefix: inspect existing `done/` folders named `{NNN}-*`, take highest NNN, add 1 (zero-pad to 3 digits, max 999).
+   - Set archive folder `done/{NNN}-{subject-slug}/` (create `done/` if missing).
+   - Append a line to `todos/delivered.md` using format `YYYY-MM-DD | {subject-slug} | {title/description} | outcome | PR/commit | done/{NNN}-{subject-slug}` (create file if missing).
+   - Move `todos/{subject-slug}/` to the archive folder (do not delete).
 
-14. **Mark checkbox in-progress**: `- [ ] Roadmap item marked complete` → `- [>]`
-15. Update `todos/roadmap.md`: Change `- [>]` → `- [x]` for this item
-16. **Mark checkbox complete**: `- [>]` → `- [x]`
-17. **Commit**: `git add -A && git commit -m "docs: mark roadmap item complete"`
+10. **Mark checkbox in-progress**: `- [ ] Worktree cleaned up` → `- [>]`
+11. Run `/{AGENT_PREFIX}remove-worktree {subject-slug}`
+12. Verify with `/{AGENT_PREFIX}list-worktrees`
+13. **Mark checkbox complete**: `- [>]` → `- [x]`
+14. **Commit**: `git add -A && git commit -m "docs: mark worktree cleanup complete"`
 
-18. **Push final changes**: `git push origin main`
+15. **Mark checkbox in-progress**: `- [ ] Roadmap item marked complete` → `- [>]`
+16. Update `todos/roadmap.md`: Change `- [>]` → `- [x]` for this item
+17. **Mark checkbox complete**: `- [>]` → `- [x]`
+18. **Commit**: `git add -A && git commit -m "docs: mark roadmap item complete"`
+
+19. **Push final changes**: `git push origin main`
 
 ## Important Notes
 

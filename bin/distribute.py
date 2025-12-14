@@ -1,26 +1,43 @@
 #!/usr/bin/env .venv/bin/python
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import shutil
+from collections.abc import Mapping
+from typing import Callable, NotRequired, TypedDict, cast
 
 import frontmatter
+from frontmatter import Post
+
+CommandMap = Mapping[str, Mapping[str, str]]
+SubstitutionMap = dict[str, str]
+Transform = Callable[[Post], str]
 
 
-def get_command_map_substitutions(command_map, agent_name):
-    """
-    Returns a dictionary of substitutions for COMMAND_MAP placeholders
-    for a specific agent. Returns empty dict if no command map provided.
-    """
-    subs = {}
-    if command_map and agent_name in command_map:
+class AgentConfig(TypedDict):
+    check_dir: str
+    prefix: str
+    master_dest: str
+    commands_dest_dir: str
+    ext: str
+    transform: Transform
+    deploy_master_dest: NotRequired[str]
+    deploy_commands_dest: NotRequired[str]
+
+
+def get_command_map_substitutions(command_map: CommandMap, agent_name: str) -> SubstitutionMap:
+    """Build the substitution map for the agent's command placeholders."""
+    subs: SubstitutionMap = {}
+    if agent_name in command_map:
         for command, value in command_map[agent_name].items():
             subs[f"{{COMMAND_MAP.{command}}}"] = value
     return subs
 
 
-def transform_to_codex(post):
-    """Transforms a post to the Codex format."""
+def transform_to_codex(post: Post) -> str:
+    """Transform a post to the Codex format."""
     lines = ["---"]
     description = post.metadata.get("description", "")
     lines.append(f'description: "{description}"')
@@ -36,8 +53,8 @@ def transform_to_codex(post):
     return "\n".join(lines)
 
 
-def transform_to_gemini(post):
-    """Transforms a post to the Gemini TOML format."""
+def transform_to_gemini(post: Post) -> str:
+    """Transform a post to the Gemini TOML format."""
     description = post.metadata.get("description", "")
 
     # Use triple quotes for description if it contains newlines
@@ -49,21 +66,17 @@ def transform_to_gemini(post):
     return f'description = {description_str}\nprompt = """\n{post.content}\n"""\n'
 
 
-def process_file(content, agent_prefix, command_map_subs):
-    """Applies substitutions to the file content."""
+def process_file(content: str, agent_prefix: str, command_map_subs: SubstitutionMap) -> str:
+    """Apply substitutions to the file content."""
     content = content.replace("{AGENT_PREFIX}", agent_prefix)
     for placeholder, value in command_map_subs.items():
         content = content.replace(placeholder, value)
     return content
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Transpile and distribute agent markdown files."
-    )
-    parser.add_argument(
-        "--deploy", action="store_true", help="Sync generated files to their locations."
-    )
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Transpile and distribute agent markdown files.")
+    parser.add_argument("--deploy", action="store_true", help="Sync generated files to their locations.")
     args = parser.parse_args()
 
     # Get the project root, which is the parent directory of the script's directory
@@ -77,26 +90,22 @@ def main():
     os.makedirs(dist_dir)
 
     # Load command map if it exists (optional)
-    command_map = {}
+    command_map: dict[str, dict[str, str]] = {}
     if os.path.exists("command-map.json"):
         with open("command-map.json", "r") as f:
-            command_map = json.load(f)
+            command_map = cast(dict[str, dict[str, str]], json.load(f))
 
     master_agents_file = "AGENTS.master.md"
     master_commands_dir = "commands.master"
 
-    agents_config = {
+    agents_config: dict[str, AgentConfig] = {
         "claude": {
             "check_dir": os.path.expanduser("~/.claude"),
             "prefix": "",
             "master_dest": os.path.join(dist_dir, "claude", "CLAUDE.md"),
             "commands_dest_dir": os.path.join(dist_dir, "claude", "commands"),
-            "deploy_master_dest": os.path.join(
-                os.path.expanduser("~/.claude"), "CLAUDE.md"
-            ),
-            "deploy_commands_dest": os.path.join(
-                os.path.expanduser("~/.claude"), "commands"
-            ),
+            "deploy_master_dest": os.path.join(os.path.expanduser("~/.claude"), "CLAUDE.md"),
+            "deploy_commands_dest": os.path.join(os.path.expanduser("~/.claude"), "commands"),
             "ext": ".md",
             "transform": lambda p: frontmatter.dumps(p),
         },
@@ -104,13 +113,9 @@ def main():
             "check_dir": os.path.expanduser("~/.codex"),
             "prefix": "prompts:",
             "master_dest": os.path.join(dist_dir, "codex", "CODEX.md"),
-            "commands_dest_dir": os.path.join(dist_dir, "codex", "commands"),
-            "deploy_master_dest": os.path.join(
-                os.path.expanduser("~/.codex"), "CODEX.md"
-            ),
-            "deploy_commands_dest": os.path.join(
-                os.path.expanduser("~/.codex"), "commands"
-            ),
+            "commands_dest_dir": os.path.join(dist_dir, "codex", "prompts"),
+            "deploy_master_dest": os.path.join(os.path.expanduser("~/.codex"), "CODEX.md"),
+            "deploy_commands_dest": os.path.join(os.path.expanduser("~/.codex"), "prompts"),
             "ext": ".md",
             "transform": transform_to_codex,
         },
@@ -119,12 +124,8 @@ def main():
             "prefix": "",
             "master_dest": os.path.join(dist_dir, "gemini", "GEMINI.md"),
             "commands_dest_dir": os.path.join(dist_dir, "gemini", "commands"),
-            "deploy_master_dest": os.path.join(
-                os.path.expanduser("~/.gemini"), "GEMINI.md"
-            ),
-            "deploy_commands_dest": os.path.join(
-                os.path.expanduser("~/.gemini"), "commands"
-            ),
+            "deploy_master_dest": os.path.join(os.path.expanduser("~/.gemini"), "GEMINI.md"),
+            "deploy_commands_dest": os.path.join(os.path.expanduser("~/.gemini"), "commands"),
             "ext": ".toml",
             "transform": transform_to_gemini,
         },
@@ -174,11 +175,21 @@ def main():
         command_map_subs = get_command_map_substitutions(command_map, agent_name)
 
         # Process AGENTS.master.md
-        processed_agents_content = process_file(
-            master_agents_content, config["prefix"], command_map_subs
+        agent_specific_file = f"AGENTS.{agent_name}.md"
+        agent_specific_content = ""
+        if os.path.exists(agent_specific_file):
+            with open(agent_specific_file, "r") as extra_f:
+                raw_agent_specific = extra_f.read()
+            agent_specific_content = process_file(raw_agent_specific, config["prefix"], command_map_subs)
+
+        processed_agents_content = process_file(master_agents_content, config["prefix"], command_map_subs)
+
+        combined_agents_content = "\n\n".join(
+            content for content in (agent_specific_content, processed_agents_content) if content
         )
+
         with open(master_dest_path, "w") as f:
-            f.write(processed_agents_content)
+            f.write(combined_agents_content)
 
         # Process commands.master/*.md
         for command_file in command_files:
@@ -187,23 +198,17 @@ def main():
                     post = frontmatter.load(f)
 
                     # Also substitute in the body of the command
-                    post.content = process_file(
-                        post.content, config["prefix"], command_map_subs
-                    )
+                    post.content = process_file(post.content, config["prefix"], command_map_subs)
 
                     transformed_content = config["transform"](post)
 
                     base_name = os.path.splitext(command_file)[0]
                     output_filename = f"{base_name}{config['ext']}"
 
-                    with open(
-                        os.path.join(commands_dest_path, output_filename), "w"
-                    ) as out_f:
+                    with open(os.path.join(commands_dest_path, output_filename), "w") as out_f:
                         out_f.write(transformed_content + "\n")
                 except Exception as e:
-                    print(
-                        f"Error processing file {command_file} for agent {agent_name}: {e}"
-                    )
+                    print(f"Error processing file {command_file} for agent {agent_name}: {e}")
 
     print("\nTranspilation complete.")
 
