@@ -31,7 +31,8 @@ target-version = ["py311"]
 profile = "black"
 
 [tool.mypy]
-exclude = ["^venv/", "^\.venv/", "^dist/"]check_untyped_defs = true
+exclude = ['^venv/', '^\\.venv/', '^dist/']
+check_untyped_defs = true
 disable_error_code = ["import-untyped"]
 disallow_any_explicit = true            # Ban Any - must use type: ignore to allow
 disallow_any_generics = true

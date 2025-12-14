@@ -32,7 +32,7 @@ For multi-computer systems (TeleClaude, distributed services, embedded systems):
 
 - Automated tests verify logic in isolation
 - Real hardware reveals: timing issues, platform differences, network behavior, actual user experience
-- **If it doesn't work on real hardware, automated tests passing is meaningless**
+- **Critical:** If it doesn't work on real hardware, automated tests passing is meaningless.
 
 ### TEST Session Naming Convention
 

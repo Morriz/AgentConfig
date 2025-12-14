@@ -10,22 +10,22 @@ The objective is to ONLY WORK ON GIHUB ISSUES created from the implementation pl
 
 ## 🚨 CRITICAL RULES (ADHERE AT ALL COSTS!)
 
-🚨 **ONLY USE EXISTING GITHUB LABELS** 🚨
+### Only Use Existing GitHub Labels
 
 - GitHub repos have standard labels already (bug, enhancement, documentation, etc.)
 - **NEVER create new labels** - label sprawl is a signalling problem
 - Use existing labels sparingly as signals, not information reference
 - Common existing labels: `bug`, `enhancement`, `documentation`, `question`, `help wanted`
 
-🚨 **DO NOT CREATE ISSUES FOR LOCAL SETUP TASKS** 🚨
+### Do Not Create Issues For Local Setup Tasks
 
 - **NEVER create issues for installing dependencies** (SOPS, age, npm, python packages, etc.)
 - **NEVER create issues for local environment setup** (generating keys, configuring local machine)
-- **NEVER create issues that require sudo/system access**
+- **NEVER:** create issues that require sudo/system access
 - These tasks MUST be done locally by the user, not in CI/GitHub Actions
 - Only create issues for **code changes** that can be automated in CI
 
-🚨 **FOCUS ON AUTOMATABLE TASKS** 🚨
+### Focus On Automatable Tasks
 
 - ✅ Creating files, writing code, updating documentation
 - ✅ Running tests, validation, linting

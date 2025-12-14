@@ -1,0 +1,11 @@
+{
+  "plugins": {
+    "md013": {
+      "enabled": false
+    },
+    "md041": {
+      "front_matter_title": "description"
+    }
+  }
+}
+
