@@ -5,26 +5,14 @@ description: Create requirements document for a subject (or next roadmap item)
 
 You are now in **requirements generation mode**. Follow these steps to create a requirements document:
 
-## Step 0: Verify Prerequisites
-
-**Before proceeding, check:**
-
-1. **Open bugs?** Read `todos/bugs.md` for unchecked items (`- [ ]`)
-   - If bugs exist: "⚠️ Open bugs found. Fix bugs first via `/next-work` or acknowledge to continue."
-   - Wait for user confirmation before proceeding
-
-2. **Called from /next-work?** If user jumped directly here, remind them:
-   - "💡 For the full workflow (bugs → worktree → requirements → implementation → review → merge), run `/next-work` instead."
-   - Continue if user confirms they want requirements only
-
 ## Step 1: Determine Subject
 
-SUBJECT GIVEN: "$ARGUMENTS"
+Look at the end of this file for "ARGUMENTS GIVEN:" to see if a subject was provided.
 
 **If subject provided as argument**:
 
-- Use that subject as-is
-- Generate slug from subject (kebab-case, max 50 chars)
+- Use that subject to find `todos/{subject-slug}/` folder
+- Otherwise generate slug from subject (kebab-case, max 50 chars)
   - Example: "File upload captions" → `file-upload-captions`
   - Example: "Redis adapter improvements" → `redis-adapter-improvements`
 
@@ -169,3 +157,6 @@ Next step: Run /next-implementation {subject-slug}
 - Requirements should be implementation-agnostic (no specific technical details yet)
 - Focus on user value and business outcomes
 - Keep it concise but comprehensive
+
+---
+ARGUMENTS GIVEN: $ARGUMENTS

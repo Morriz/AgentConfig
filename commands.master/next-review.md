@@ -1,35 +1,43 @@
 ---
 description: Review code changes for quality, bugs, and project compliance. Use before committing or as part of /next-work.
-argument-hint: '[scope|aspects]'
+argument-hint: '[subject]'
 ---
 
-# Code Review
+You are now in **reviewer mode**.Review code changes using specialized analysis. Outputs findings organized by severity.
 
-Review code changes using specialized analysis. Outputs findings organized by severity.
+## Step 1: Determine Subject
 
-**Arguments:** "$ARGUMENTS"
+Look at the end of this file for "ARGUMENTS GIVEN:" to see if a subject was provided.
 
-- If scope (file/folder): review only those files
-- If aspects (code, tests, errors, types, comments, simplify): run only those reviews
-- Default: review all changed files with all applicable aspects
+**If subject provided as argument**:
 
-## Step 1: Identify Changes
+- Use that subject to find `todos/{subject-slug}/` folder
+
+**If NO subject provided**:
+
+1. Read `todos/roadmap.md`
+2. Find the first item marked as in-progress (`- [>]`) and which has no `todos/{subject-slug}/review-findings.md` yet.
+3. If no in-progress item, don't do anything and inform the user.
+
+Next you will compare what was done in the worktree branch against the requirements and implementation plan.
+
+## Step 2: Identify Changes
 
 ```bash
 git status
 git diff --name-only HEAD
 ```
 
-If scope provided, filter to those files. Otherwise review all changed files.
+## Step 3: Load Project Context
 
-## Step 2: Load Project Context
+You already read the `~/.agents/docs/coding-directives.md`. Also read `~/.agents/docs/testing-directives.md`.
+Now read project specifics:
 
-Read project standards:
 
-- `CLAUDE.md` or `AGENTS.md` - Project patterns and conventions
-- Existing code in same modules - Match existing style
+- `README.md`, `docs/*` - Project patterns and conventions
+- Existing code in same modules - New code should match existing style
 
-## Step 3: Determine Applicable Reviews
+## Step 4: Determine Applicable Reviews
 
 Based on changes, select which aspects to run:
 
@@ -42,7 +50,7 @@ Based on changes, select which aspects to run:
 | **comments** | Comments/docs added | Accuracy, maintainability |
 | **simplify** | After other reviews pass | Clarity, reduce complexity |
 
-## Step 4: Run Reviews
+## Step 5: Run Reviews
 
 For each applicable aspect, analyze the changes:
 
@@ -93,7 +101,7 @@ For each applicable aspect, analyze the changes:
 - Can functions be smaller?
 - Is code self-documenting?
 
-## Step 5: Aggregate Findings
+## Step 6: Aggregate Findings
 
 Organize all findings by severity:
 
@@ -121,40 +129,16 @@ Organize all findings by severity:
 [ ] NEEDS DISCUSSION - Architectural concerns to resolve
 ```
 
-## Step 6: Output
+## Step 7: Output
 
-1. Print the findings summary to console
-2. If `todos/{subject-slug}/` exists, also write to `todos/{subject-slug}/review-findings.md`
+- Write to `todos/{subject-slug}/review-findings.md`
+- Brief summary to the user and mention file location.
 
-## Usage
-
-**Review all changes:**
-
-```bash
-/{AGENT_PREFIX}next-review
-```
-
-**Review specific files:**
-
-```bash
-/{AGENT_PREFIX}next-review src/api/handler.py
-```
-
-**Run specific aspects:**
-
-```bash
-/{AGENT_PREFIX}next-review tests errors
-```
-
-**Review scope with aspects:**
-
-```bash
-/{AGENT_PREFIX}next-review src/api tests code
-```
-
-## Tips
+## IMPORTANT
 
 - Run before committing, not after
 - Fix critical issues before moving on
 - Re-run after applying fixes
-- Use with `/{AGENT_PREFIX}next-work` for full workflow integration
+
+---
+ARGUMENTS GIVEN: $ARGUMENTS

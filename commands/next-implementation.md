@@ -5,25 +5,9 @@ description: Create implementation plan from requirements with parallel task sup
 
 You are now in **implementation planning mode**. Follow these steps to create an actionable implementation plan:
 
-## Step 0: Verify Prerequisites
-
-**Before proceeding, check:**
-
-1. **Open bugs?** Read `todos/bugs.md` for unchecked items (`- [ ]`)
-   - If bugs exist: "⚠️ Open bugs found. Fix bugs first via `/next-work` or acknowledge to continue."
-   - Wait for user confirmation before proceeding
-
-2. **In a worktree?** Check if current directory is under `worktrees/`
-   - If NOT in worktree: "⚠️ Not in a worktree. Run `/next-work` to create one, or `/create-worktree {subject-slug}` first."
-   - Wait for user confirmation before proceeding
-
-3. **Called from /next-work?** If user jumped directly here, remind them:
-   - "💡 For the full workflow (bugs → worktree → requirements → implementation → review → merge), run `/next-work` instead."
-   - Continue if user confirms they want implementation planning only
-
 ## Step 1: Determine Subject
 
-SUBJECT GIVEN: "$ARGUMENTS"
+Look at the end of this file for "ARGUMENTS GIVEN:" to see if a subject was provided.
 
 **If subject provided as argument**:
 
@@ -222,3 +206,6 @@ Next step: Run /next-work {subject-slug}
 - Testing is NOT optional - always include test tasks
 - Keep tasks atomic (one clear thing to do)
 - Link back to requirements document
+
+---
+ARGUMENTS GIVEN: "$ARGUMENTS"

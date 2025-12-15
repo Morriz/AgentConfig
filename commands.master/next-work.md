@@ -1,6 +1,6 @@
 ---
 description: Find out what to do next and continue WIP or break down todo story into requirements + implementation plan. Use for queries like "what's next", "next-work", "next", "work", or "start work".
-argument-hint: "[subject]"
+argument-hint: "[subject] "
 ---
 
 You are now in **WORK mode**. Your output is ALWAYS working code that is covered by tests.
@@ -15,7 +15,7 @@ Follow these steps to find out what to do next:
 
 ## Step 2: Determine Subject
 
-ARGUMENT GIVEN: "$ARGUMENTS"
+Look at the end of this file for "ARGUMENTS GIVEN:" to see if a subject was provided.
 
 **If subject provided as argument**:
 
@@ -25,7 +25,7 @@ ARGUMENT GIVEN: "$ARGUMENTS"
 
 1. Read `todos/roadmap.md`
 2. Find the item marked as in-progress (`- [>]`)
-3. If no in-progress item, find first unchecked item (`- [ ]`) that is clear to you (mark `[~]` if unsure and ask for input)
+3. If no in-progress item, find first unchecked item (`- [ ]`) that is clear to you, otherwise ask for input
 4. Extract description and generate slug
 5. Use that as the subject
 
@@ -322,3 +322,6 @@ If blocked:
 1. Document blocker in implementation-plan.md
 2. Ask user for clarification
 3. Don't proceed until unblocked
+
+---
+ARGUMENTS GIVEN: "$ARGUMENTS"
