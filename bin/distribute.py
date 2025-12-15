@@ -40,7 +40,7 @@ def transform_to_codex(post: Post) -> str:
     """Transform a post to the Codex format."""
     lines = ["---"]
     description = post.metadata.get("description", "")
-    lines.append(f'description: "{description}"')
+    lines.append(f'description: """{description}"""')
 
     arg_hint = post.metadata.get("argument-hint")
     if arg_hint:
@@ -57,11 +57,7 @@ def transform_to_gemini(post: Post) -> str:
     """Transform a post to the Gemini TOML format."""
     description = post.metadata.get("description", "")
 
-    # Use triple quotes for description if it contains newlines
-    if "\n" in description:
-        description_str = f'"""\n{description}\n"""'
-    else:
-        description_str = f'"{description}"'
+    description_str = f'"""{description}"""'
 
     return f'description = {description_str}\nprompt = """\n{post.content}\n"""\n'
 
