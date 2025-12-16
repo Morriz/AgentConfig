@@ -17,6 +17,10 @@ Find all unchecked items (lines with [ ])
 
 If no unchecked bugs, report "No bugs to fix" and stop.
 
+If bugs found, determine which ones can be tackled in parallel (non-overlapping files/components).
+
+Prioritize independent bugs first, so you can dispatch those in parallel to debugger subagents.
+
 ---
 
 ## Step 2: For Each Bug
