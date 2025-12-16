@@ -5,13 +5,11 @@ import argparse
 import json
 import os
 import shutil
-from collections.abc import Mapping
 from typing import Callable, NotRequired, TypedDict, cast
 
 import frontmatter
 from frontmatter import Post
 
-CommandMap = Mapping[str, Mapping[str, str]]
 SubstitutionMap = dict[str, str]
 Transform = Callable[[Post], str]
 
@@ -25,15 +23,6 @@ class AgentConfig(TypedDict):
     transform: Transform
     deploy_master_dest: NotRequired[str]
     deploy_commands_dest: NotRequired[str]
-
-
-def get_command_map_substitutions(command_map: CommandMap, agent_name: str) -> SubstitutionMap:
-    """Build the substitution map for the agent's command placeholders."""
-    subs: SubstitutionMap = {}
-    if agent_name in command_map:
-        for command, value in command_map[agent_name].items():
-            subs[f"{{COMMAND_MAP.{command}}}"] = value
-    return subs
 
 
 def transform_to_codex(post: Post) -> str:
@@ -58,18 +47,16 @@ def transform_to_gemini(post: Post) -> str:
     description = post.metadata.get("description", "")
 
     description_str = f'"""{description}"""'
-    
+
     # replace $ARGUMENTS for {{args}} in gemini format
     content = post.content.replace("$ARGUMENTS", "{{args}}")
 
     return f'description = {description_str}\nprompt = """\n{content}\n"""\n'
 
 
-def process_file(content: str, agent_prefix: str, command_map_subs: SubstitutionMap) -> str:
+def process_file(content: str, agent_prefix: str) -> str:
     """Apply substitutions to the file content."""
     content = content.replace("{AGENT_PREFIX}", agent_prefix)
-    for placeholder, value in command_map_subs.items():
-        content = content.replace(placeholder, value)
     return content
 
 
@@ -171,17 +158,15 @@ def main() -> None:
             os.makedirs(master_dest_dir, exist_ok=True)
         os.makedirs(commands_dest_path, exist_ok=True)
 
-        command_map_subs = get_command_map_substitutions(command_map, agent_name)
-
         # Process AGENTS.master.md
         agent_specific_file = f"AGENTS.{agent_name}.md"
         agent_specific_content = ""
         if os.path.exists(agent_specific_file):
             with open(agent_specific_file, "r") as extra_f:
                 raw_agent_specific = extra_f.read()
-            agent_specific_content = process_file(raw_agent_specific, config["prefix"], command_map_subs)
+            agent_specific_content = process_file(raw_agent_specific, config["prefix"])
 
-        processed_agents_content = process_file(master_agents_content, config["prefix"], command_map_subs)
+        processed_agents_content = process_file(master_agents_content, config["prefix"])
 
         combined_agents_content = "\n\n".join(
             content for content in (agent_specific_content, processed_agents_content) if content
@@ -197,7 +182,7 @@ def main() -> None:
                     post = frontmatter.load(f)
 
                     # Also substitute in the body of the command
-                    post.content = process_file(post.content, config["prefix"], command_map_subs)
+                    post.content = process_file(post.content, config["prefix"])
 
                     transformed_content = config["transform"](post)
 
