@@ -1,5 +1,5 @@
 ---
-description: Load implementation context for coding. Use when implementing features,
+description: Load implementation context for coding. Use when given next-build command, implementing features,
   fixing bugs, or working on specific tasks.
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Load strategic context for architecture and requirements work. Use when
+description: Load strategic context for architecture and requirements work. Use when asked to be architect,
   discussing design, planning features, or grooming roadmap.
 ---
 

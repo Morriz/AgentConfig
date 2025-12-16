@@ -1,6 +1,6 @@
 ---
 description: Load strategic context for architecture and requirements work. Use when
-  discussing design, planning features, or grooming roadmap.
+  asked to be architect, discussing design, planning features, or grooming roadmap.
 ---
 
 # Prime Architect

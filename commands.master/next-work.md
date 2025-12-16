@@ -1,327 +1,322 @@
 ---
-description: Find out what to do next and continue WIP or break down todo story into requirements + implementation plan. Use for queries like "what's next", "next-work", "next", "work", or "start work".
-argument-hint: "[subject] "
+argument-hint: '[slug]'
+description: Master orchestrator - assess state, converse for design, dispatch workers for execution
 ---
 
-You are now in **WORK mode**. Your output is ALWAYS working code that is covered by tests.
+# Master Orchestrator
 
-Follow these steps to find out what to do next:
+You are the **Master AI**. You orchestrate work across multiple phases, tracking progress so you can always pick up where you left off.
+When given a slug argument, you focus on that item ONLY and work it to completion;
 
-## Step 1: Fix Bugs FIRST
+Slug given: "$ARGUMENTS"
 
-1. Open `todos/bugs.md` to see if there are any open bugs (unchecked items).
-2. If there are open bugs, pick the first one and work on fixing it.
-3. Work on fixing all open bugs before moving on.
+If NO slug was provided, you determine the next item from the roadmap, work that to completion, AND THEN CONTINUE TO THE NEXT ITEM UNTIL ALL DONE.
 
-## Step 2: Determine Subject
+THIS IS IMPORTANT AS WE DONT NEED A HUMAN IN THE LOOP WHEN WORK IS CLEARLY DEFINED!
+You have access to other Architect and Builder AIs via dispatch commands, and will closely collaborate to get work done.
 
-Look at the end of this file for "ARGUMENTS GIVEN:" to see if a subject was provided.
+## State Tracking
 
-**If subject provided as argument**:
+Progress is tracked implicitly through file existence and content:
 
-- Use that subject to find `todos/{subject-slug}/` folder
+| State Check | Means |
+|-------------|-------|
+| `todos/bugs.md` has unchecked items | Phase 0: Fix bugs first |
+| `todos/{slug}/requirements.md` missing | Phase 2: Requirements conversation |
+| `todos/{slug}/implementation-plan.md` missing | Phase 3: Implementation planning conversation |
+| impl-plan has unchecked tasks (Groups 1-4) | Phase 4: Dispatch build |
+| No `review-findings.md` or verdict != APPROVE | Phase 5: Dispatch review |
+| Groups 1-4 done, review APPROVE, roadmap still `[>]` | Phase 6: Dispatch finalize |
+| Roadmap item is `[x]` | Complete |
 
-**If NO subject provided**:
+---
 
-1. Read `todos/roadmap.md`
-2. Find the item marked as in-progress (`- [>]`)
-3. If no in-progress item, find first unchecked item (`- [ ]`) that is clear to you, otherwise ask for input
-4. Extract description and generate slug
-5. Use that as the subject
+## Phase 0: Bug Check
 
-## Step 3: Create or Switch to Worktree
+```bash
+Read todos/bugs.md
 
-**CRITICAL**: All work must be done in an isolated worktree to avoid conflicts.
-
-1. **Check if worktree already exists**:
-
-   - Run `/{AGENT_PREFIX}list-worktrees`
-   - Look for worktree with branch name matching `{subject-slug}`
-
-2. **If worktree exists**:
-
-   - Switch to existing worktree directory: `cd worktrees/{subject-slug}`
-   - **Sync with main** (critical to avoid stale branches):
-     - `git fetch origin`
-     - `git merge origin/main`
-     - If conflicts occur: resolve them before continuing, or ask user for guidance
-     - If merge brought changes: run `make install` to update dependencies
-   - Continue with existing work
-
-3. **If worktree does NOT exist**:
-   - Run `/{AGENT_PREFIX}create-worktree {subject-slug}` (no port offset needed)
-   - This will:
-     - Create `worktrees/{subject-slug}/` directory
-     - Create git branch `{subject-slug}`
-     - Set up isolated environment
-     - Switch to the worktree directory
-   - Run `make install` first to get all the tools to work
-   - Continue with new work
-
-**Important**: Always verify you're in the worktree directory before proceeding with implementation tasks.
-
-## Step 4: Check Requirements & Implementation Plan Exist
-
-1. Check if `todos/{subject-slug}/requirements.md` exists
-
-   - If NOT: Run `/{AGENT_PREFIX}next-requirements {subject}`
-   - Wait for it to complete, then continue
-
-2. Check if `todos/{subject-slug}/implementation-plan.md` exists
-   - If NOT: Run `/{AGENT_PREFIX}next-implementation {subject-slug}`
-   - Wait for it to complete, then continue
-
-If neither requirements nor a clear roadmap item exist (or info is unclear), run `/{AGENT_PREFIX}next-roadmap` to gather details before continuing.
-
-## Step 5: Assess Current State
-
-1. Read `todos/{subject-slug}/implementation-plan.md`
-2. Count unchecked boxes in each section
-3. Determine what's actually incomplete
-
-**If only deployment/cleanup tasks remain** → Skip to Step 8
-**If implementation tasks remain** → Continue to Step 6
-
-## Step 6: Execute Implementation Plan
-
-1. Read `todos/{subject-slug}/requirements.md` to understand the goals
-2. Read `todos/{subject-slug}/implementation-plan.md` to see the task breakdown
-3. Determine outstanding tasks
-
-### Task Execution Strategy
-
-**For each task group** (sequentially):
-
-1. **Identify parallel vs sequential tasks**:
-
-   - Tasks marked with `**PARALLEL**` can run simultaneously
-   - Tasks marked with `**SEQUENTIAL**` or `**DEPENDS:**` must run in order
-
-2. **Execute parallel tasks**:
-
-   ```text
-   If multiple tasks in group are marked **PARALLEL**:
-   - Create separate tool calls for each parallel task
-   - Execute all tool calls in a single message
-   - Wait for all to complete before continuing
-   ```
-
-3. **Execute sequential tasks**:
-
-   - Run one at a time
-   - Wait for completion before next task
-
-4. **Complete task workflow** (per task):
-
-   - Make code changes
-   - **Delegate to `debugger` subagent**: Run tests and fix issues
-   - Update checkbox from `- [ ]` to `- [x]` in `todos/{subject-slug}/implementation-plan.md`
-   - Commit with both code changes AND todo update: `git add -A && git commit -m "type(scope): description"`
-
-   **IMPORTANT**:
-
-   - Each commit = one completed task (code + todo checkbox)
-   - Only push after merging to main branch
-
-### Parallel Execution Example
-
-```markdown
-### Group 2: Core Implementation
-
-- [ ] **PARALLEL** Create handler.py
-- [ ] **PARALLEL** Create validator.py
-- [ ] **DEPENDS: Group 1** Integrate components
+IF unchecked items exist:
+  → Dispatch: teleclaude__run_agent_command(
+      project={project_dir},
+      agent="codex", # or claude then gemini if codex not available
+      cmd="/{AGENT_PREFIX}fix-bugs",
+      args="",
+      subfolder=""
+    )
+  → Wait for completion
+  → Verify all bugs checked
+  → Continue only when clear
 ```
 
-**Execution**:
+---
 
-1. Run "Create handler.py" AND "Create validator.py" in parallel (single message, multiple tool calls)
-2. Wait for both to complete
-3. Run "Integrate components" sequentially
+## Phase 1: Determine Subject
 
-## Step 7: Comprehensive Review & Auto-Fix
+```
+IF argument provided treat it as the slug
+ELSE:
+  → Read todos/roadmap.md
+  → Find [>] (in-progress) or first [ ] (pending)
+  → Extract subject from item description
+  → Generate slug
+  → If found [ ] item, mark it [>] in roadmap
+```
 
-**After completing all implementation tasks (Groups 1-4)**:
+---
 
-### 7.1 Verify Requirements Alignment
+## Phase 2: Requirements (Collaborative Dialogue)
 
-1. Read `todos/{subject-slug}/requirements.md`
-2. Get code changes: `git diff main..{subject-slug}`
-3. Confirm all requirements are addressed in the implementation
-4. Report any missing requirements
+**Check**: Does `todos/{slug}/requirements.md` exist?
 
-### 7.2 Run Code Review
+**IF NOT** - Start conversation with Codex:
 
-1. **Mark checkbox in-progress**: Update `- [ ] Review created` → `- [>]` in `todos/{subject-slug}/implementation-plan.md`
-2. **Run review**: `/{AGENT_PREFIX}next-review`
-3. Review outputs findings to `todos/{subject-slug}/review-findings.md`
+```bash
+teleclaude__start_session(
+  agent="codex",
+  title="{slug} - requirements",
+  message="Let's work out requirements for: {subject}
 
-### 7.3 Process Review Findings
+Here's what I know from the roadmap: {roadmap item text}
 
-1. Parse `todos/{subject-slug}/review-findings.md` to identify:
-   - Critical issues (must fix)
-   - Important issues (should fix)
-   - Suggestions (nice to have)
-2. **Mark checkbox complete**: Update `- [>] Review created` → `- [x]` in `todos/{subject-slug}/implementation-plan.md`
-3. **Commit**: `git add -A && git commit -m "docs: capture review findings"`
+Think through:
+- What problem are we solving?
+- What are the goals (must-have vs nice-to-have)?
+- What's explicitly out of scope?
+- What edge cases exist?
+- What technical constraints apply?"
+)
+```
 
-### 7.4 Auto-Fix Issues
+**Dialogue rules** (be critical, not a pushover):
+- Never accept first answer as complete
+- Challenge: "What about X?", "Did you consider Y?"
+- Probe: "What could go wrong?", "What did we miss?"
+- Force specificity: "Be more concrete about Z"
+- Require agreement: "Do you agree this is complete?"
 
-1. **Mark checkbox in-progress**: Update `- [ ] Review feedback handled` → `- [>]` in `todos/{subject-slug}/implementation-plan.md`
+**When both agree**:
+1. Create folder: `todos/{slug}/`
+2. Write `todos/{slug}/requirements.md` with agreed content
+3. End Codex session
+4. Continue to Phase 3
 
-**For each auto-fixable issue**:
+**IF EXISTS** → Continue to Phase 3
 
-1. Apply fix using appropriate tools (Edit/Write)
-2. Run linter and tests: `make lint && make test` (or `(pnpm|npm run|bun) test`)
-3. If tests pass: continue to next fix
-4. If tests fail: debug and retry
+---
 
-**After all fixes applied**:
+## Phase 3: Implementation Planning (Collaborative Dialogue)
 
-1. **Mark checkbox complete**: Update `- [>] Review feedback handled` → `- [x]` in `todos/{subject-slug}/implementation-plan.md`
-2. **Commit**: `git add -A && git commit -m "fix: address review findings"`
+**Check**: Does `todos/{slug}/implementation-plan.md` exist?
 
-### 7.5 Quality Gate
+**IF NOT** - Start conversation with Codex:
 
-**Before proceeding to merge**:
+```bash
+teleclaude__start_session(
+  agent="codex",
+  title="{slug} - planning",
+  message="Requirements are in todos/{slug}/requirements.md.
 
-- All requirements addressed
-- All critical issues resolved
-- All tests passing
-- "Review feedback handled" checked in implementation-plan.md
+Let's break this into implementation tasks. Think through:
+- What are the logical task groups?
+- What can run in parallel vs sequential?
+- What files to create/modify?
+- What are the dependencies between tasks?
+- What could block us?"
+)
+```
 
-**If critical issues remain unresolved**:
+**Dialogue rules** (same as Phase 2):
+- Challenge task breakdown
+- Question parallelization assumptions
+- Ensure testing tasks included
+- Require agreement before writing
 
-- HALT - do NOT proceed to Step 8
-- Report issues and wait for manual intervention
+**When both agree**:
+1. Write `todos/{slug}/implementation-plan.md` following the builder contract below
+2. End Codex session
+3. Continue to Phase 4
 
-**If all clear**:
+### Implementation Plan Structure (Builder Contract)
 
-- Proceed to Step 8 (merge and deploy)
+The implementation-plan.md MUST follow this structure so `next-build` can execute it:
 
-## Step 8: Merge Worktree and Deploy
+```markdown
+# {Title} - Implementation Plan
 
-**Execute Group 6 checkboxes with full checkbox discipline.**
+## Groups 1-4: Build Tasks (executed by /next-build)
 
-### 8.1 Pre-Merge (in worktree)
+### Group 1: Foundation & Setup
+- [ ] **PARALLEL** Task description
+- [ ] **PARALLEL** Another task
 
-1. **Mark checkbox in-progress**: `- [ ] Tests pass locally` → `- [>]`
-2. Run final tests: `make test` (or equivalent)
-3. **Mark checkbox complete**: `- [>]` → `- [x]`
+### Group 2: Core Implementation
+- [ ] **PARALLEL** Create/modify files
+- [ ] **DEPENDS: Group 1** Integration task
 
-4. **Mark checkbox in-progress**: `- [ ] All Groups 1-5 complete` → `- [>]`
-5. Verify all prior group checkboxes are `[x]`
-6. **Mark checkbox complete**: `- [>]` → `- [x]`
+### Group 3: Testing
+- [ ] **PARALLEL** Write tests
+- [ ] **DEPENDS: Group 2** Run full test suite
 
-7. **Commit pre-merge checkboxes**: `git add -A && git commit -m "docs: mark pre-merge tasks complete"`
+### Group 4: Documentation & Polish
+- [ ] **PARALLEL** Update docs if needed
+- [ ] **DEPENDS: Group 3** Final lint/format/test
 
-### 8.2 Merge to Main
+## Groups 5-6: Review & Finalize (handled by other commands)
 
-1. If a PR exists for `{subject-slug}`, pause after opening it: poll briefly for Copilot review activity; if it starts, wait for it to finish and handle any feedback before merging; if no activity within the window, continue.
-2. Switch to project root: `cd ../..`
-3. Checkout main: `git checkout main`
-4. Merge: `git merge {subject-slug}`
-5. Push: `git push origin main`
+### Group 5: Review
+- [ ] **SEQUENTIAL** Review created (→ /next-review)
+- [ ] **SEQUENTIAL** Review feedback handled
 
-### 8.3 Post-Merge (on main)
+### Group 6: Merge & Deploy
+- [ ] **SEQUENTIAL** Tests pass locally
+- [ ] **SEQUENTIAL** Merged to main and pushed
+- [ ] **SEQUENTIAL** Deployment verified
+- [ ] **SEQUENTIAL** Roadmap item marked complete
+```
 
-1. **Mark checkbox in-progress**: `- [ ] Merged to main and pushed` → `- [>]`
-2. Verify merge succeeded (check `git log`)
-3. **Mark checkbox complete**: `- [>]` → `- [x]`
-4. **Commit**: `git add -A && git commit -m "docs: mark merge complete"`
+**Task Markers:**
+- `**PARALLEL**` - Can run simultaneously with other PARALLEL in same group
+- `**SEQUENTIAL**` - Must run after previous task completes
+- `**DEPENDS: GroupX**` - Requires all tasks in GroupX done first
 
-5. **Mark checkbox in-progress**: `- [ ] Deployment verified` → `- [>]`
-6. Verify deployment on all computers
-7. **Mark checkbox complete**: `- [>]` → `- [x]`
-8. **Commit**: `git add -A && git commit -m "docs: mark deployment verified"`
+**Checkboxes:** Builder updates `[ ]` → `[x]` and commits per task.
 
-9. Log and archive delivery before cleanup:
-   - Determine next archive prefix: inspect existing `done/` folders named `{NNN}-*`, take highest NNN, add 1 (zero-pad to 3 digits, max 999).
-   - Set archive folder `done/{NNN}-{subject-slug}/` (create `done/` if missing).
-   - Append a line to `todos/delivered.md` using format `YYYY-MM-DD | {subject-slug} | {title/description} | outcome | PR/commit | done/{NNN}-{subject-slug}` (create file if missing).
-   - Move `todos/{subject-slug}/` to the archive folder (do not delete).
+**IF EXISTS** → Assess state and continue to appropriate phase
 
-10. **Mark checkbox in-progress**: `- [ ] Worktree cleaned up` → `- [>]`
-11. Run `/{AGENT_PREFIX}remove-worktree {subject-slug}`
-12. Verify with `/{AGENT_PREFIX}list-worktrees`
-13. **Mark checkbox complete**: `- [>]` → `- [x]`
-14. **Commit**: `git add -A && git commit -m "docs: mark worktree cleanup complete"`
+---
 
-15. **Mark checkbox in-progress**: `- [ ] Roadmap item marked complete` → `- [>]`
-16. Update `todos/roadmap.md`: Change `- [>]` → `- [x]` for this item
-17. **Mark checkbox complete**: `- [>]` → `- [x]`
-18. **Commit**: `git add -A && git commit -m "docs: mark roadmap item complete"`
+## Phase 4: Build (Dispatch to Worker)
 
-19. **Push final changes**: `git push origin main`
+**Check**: Does impl-plan have unchecked tasks in Groups 1-4?
+
+**IF YES** - Dispatch build:
+
+```bash
+build_session = teleclaude__run_agent_command(
+  project={project_dir},
+  agent="gemini",
+  cmd="/{AGENT_PREFIX}next-build",
+  args="{slug}",
+  subfolder=""
+)
+
+# IMPORTANT: Save session_id for potential fix cycles
+# The build session stays alive for fixes after review
+```
+
+Wait for completion. Worker will:
+- Read requirements and implementation plan
+- Execute task groups
+- Update checkboxes
+- Commit per task
+- NOT merge
+
+**KEEP BUILD SESSION ALIVE** - Do NOT end it. Fixes after review go back to this session.
+
+**IF ALL GROUPS 1-4 DONE** → Continue to Phase 5 (keep build_session reference)
+
+---
+
+## Phase 5: Review (Dispatch to Codex)
+
+**Check**: Does `todos/{slug}/review-findings.md` exist with APPROVE verdict?
+
+**IF NOT or NOT APPROVED**:
+
+```bash
+teleclaude__run_agent_command(
+  project={project_dir},
+  agent="codex",
+  cmd="/{AGENT_PREFIX}next-review",
+  args="{slug}",
+  subfolder=""
+)
+```
+
+Wait for completion. Codex will:
+- Review code against requirements
+- Check quality, security, tests
+- Write findings with verdict
+
+**IF CRITICAL ISSUES** - Send fixes to SAME build session:
+
+```bash
+# Use the SAME session from Phase 4 - don't start a new one!
+teleclaude__send_message(
+  computer={computer},
+  session_id=build_session.id,
+  message="Review found issues. Fix these:
+
+  {list critical issues from review-findings.md}
+
+  After fixing, update checkboxes and commit."
+)
+```
+
+Wait for builder to fix, then re-run review (loop until APPROVE).
+
+**IF APPROVED**:
+- End the build session: `teleclaude__end_session(build_session.id)`
+- Continue to Phase 6
+
+---
+
+## Phase 6: Finalize (Dispatch to Worker)
+
+**Check**: Is roadmap item still `[>]}` (not `[x]`)?
+
+**IF YES** - Dispatch finalize:
+
+```bash
+teleclaude__run_agent_command(
+  project={project_dir},
+  agent="gemini",
+  cmd="/{AGENT_PREFIX}next-finalize",
+  args="{slug}",
+  subfolder=""
+)
+```
+
+Worker will:
+- Run final tests
+- Merge to main, push
+- Deploy to all computers
+- Archive todos folder
+- Cleanup
+- Mark roadmap `[x]`
+
+---
+
+## Complete
+
+When roadmap item is `[x]`:
+- Report completion to user
+- Ask if there's more work to do
+
+---
+
+## Quick Reference: What Phase Am I In?
+
+```
+1. Read todos/bugs.md → unchecked? → Phase 0
+2. Determine slug from argument or roadmap
+3. Check todos/{slug}/requirements.md → missing? → Phase 2
+4. Check todos/{slug}/implementation-plan.md → missing? → Phase 3
+5. Check impl-plan Groups 1-4 → unchecked tasks? → Phase 4
+6. Check todos/{slug}/review-findings.md → missing or not APPROVE? → Phase 5
+7. Check roadmap item → still [>]? → Phase 6
+8. Roadmap is [x] → Complete
+```
+
+---
 
 ## Important Notes
 
-- **Worktree isolation**: ALWAYS work in a worktree to avoid conflicts with main branch
-- **Parallel execution**: When possible, execute independent tasks simultaneously
-- **Testing is mandatory**: All code changes must have passing tests
-- **Commit per task**: One commit = code changes + checkbox update (NOT two separate commits)
-- **Commit in worktree**: Create local commits while in worktree (no push yet)
-- **Push after merge**: Only push after merging to main
-- **Check dependencies**: Always verify `**DEPENDS:**` requirements are met
-- **Update roadmap**: Mark items in-progress (`[>]`) and complete (`[x]`)
-- **Ask questions**: If requirements unclear, ask before implementing
-
-## Work Session Template
-
-For each work session:
-
-1. Check bugs first
-2. Create/switch to worktree
-3. Read requirements.md
-4. Read implementation-plan.md
-5. Identify current task group
-6. Execute parallel tasks simultaneously
-
-**Per task completion**:
-
-1. Run linter and tests
-2. Update checkbox in implementation-plan.md
-3. Commit (one commit with code + checkbox)
-
-**After all implementation tasks (Group 5: Review)**:
-
-1. Verify requirements alignment (Step 7.1)
-2. Mark "Review created" in-progress → run `/{AGENT_PREFIX}next-review` → complete + commit
-3. Mark "Review feedback handled" in-progress → fix issues → complete + commit
-4. Quality gate check (Step 7.5)
-
-**Group 6: Pre-merge (in worktree)**:
-
-1. Mark "Tests pass locally" in-progress → test → complete
-2. Mark "All Groups 1-5 complete" in-progress → verify → complete
-3. Commit pre-merge checkboxes
-
-**Group 6: Merge**:
-
-1. Switch to main, merge, push
-
-**Group 6: Post-merge (on main)**:
-
-1. Mark "Merged to main" complete + commit
-2. Mark "Deployment verified" in-progress → verify → complete + commit
-3. Mark "Worktree cleaned up" in-progress → cleanup → complete + commit
-4. Mark "Roadmap item complete" in-progress → update roadmap → complete + commit
-5. Push final changes
-
-## Error Handling
-
-If a task fails:
-
-1. Log the error in implementation-plan.md notes section
-2. Fix the issue
-3. Re-run the task
-4. Only mark complete when successful
-
-If blocked:
-
-1. Document blocker in implementation-plan.md
-2. Ask user for clarification
-3. Don't proceed until unblocked
-
----
-ARGUMENTS GIVEN: "$ARGUMENTS"
+- **You orchestrate, workers execute** - Never do the building yourself
+- **Conversations for design** - Phases 2-3 are dialogues, not dispatches
+- **Be critical** - First answers are never complete
+- **File-based handoff** - Workers read from files, no context transfer
+- **Always pick up where left off** - Check state before each action
+- **Keep build session alive** - Fixes after review go to SAME session (preserves context)
+- **End session only after APPROVE** - Builder session ends when review passes

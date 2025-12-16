@@ -9,6 +9,8 @@ Keep documentation truthful to the codebase.
 
 ## Scope
 
+ARGUMENT: "$ARGUMENTS"
+
 - ARGUMENT: optional focus area (path, feature, or component). If omitted, cover the whole repo.
 - Always operate from project root to keep paths correct.
 

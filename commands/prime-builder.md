@@ -1,6 +1,6 @@
 ---
-description: Load implementation context for coding. Use when implementing features,
-  fixing bugs, or working on specific tasks.
+description: Load implementation context for coding. Use when given next-build command,
+  implementing features, fixing bugs, or working on specific tasks.
 ---
 
 # Prime Builder

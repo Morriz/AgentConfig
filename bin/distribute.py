@@ -58,8 +58,11 @@ def transform_to_gemini(post: Post) -> str:
     description = post.metadata.get("description", "")
 
     description_str = f'"""{description}"""'
+    
+    # replace $ARGUMENTS for {{args}} in gemini format
+    content = post.content.replace("$ARGUMENTS", "{{args}}")
 
-    return f'description = {description_str}\nprompt = """\n{post.content}\n"""\n'
+    return f'description = {description_str}\nprompt = """\n{content}\n"""\n'
 
 
 def process_file(content: str, agent_prefix: str, command_map_subs: SubstitutionMap) -> str:

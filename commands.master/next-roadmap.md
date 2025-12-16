@@ -7,7 +7,7 @@ You are in **roadmap discovery mode**. Output is a concise agreement summary plu
 
 ## Step 1: Determine Subject
 
-Look at the end of this file for "ARGUMENTS GIVEN:" to see if a subject was provided.
+Subject given: "$ARGUMENTS"
 
 ## Step 2: Determine focus
 
@@ -50,6 +50,3 @@ Guardrails:
 - No files are written in this command.
 - Do not invent requirements; only capture what the user confirms.
 - Keep it short and decision-focused.
-
----
-ARGUMENTS GIVEN: $ARGUMENTS
