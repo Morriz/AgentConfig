@@ -26,7 +26,6 @@ For multi-computer systems (TeleClaude, distributed services, embedded systems):
    - Example: `"TEST: session lookup"` → generates channel: `$MozBook > $RasPi[apps/TeleClaude] - TEST: session lookup`
    - Manually verify the feature works on real hardware
 4. **Only commit if real-world testing passes** - automated tests + real hardware verification
-5. **Deploy with `/deploy`** - after commit, use deployment command to roll out to all computers
 
 ### Why This Matters
 

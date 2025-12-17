@@ -52,15 +52,15 @@ When no pending items remain:
 
 1. **First, sync to verify nothing was missed:**
 
-   ```bash
-   /sync-todos
-   ```
+```bash
+/sync-todos
+```
 
 2. **If still empty, spawn an Architect peer for brainstorming:**
 
-   ```bash
-   teleclaude__start_session(message="/prime-architect then brainstorm what's next")
-   ```
+```bash
+teleclaude__start_session(message="/prime-architect then brainstorm what's next")
+```
 
 Two Architects discuss together:
 

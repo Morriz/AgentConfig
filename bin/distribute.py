@@ -87,7 +87,7 @@ def main() -> None:
     agents_config: dict[str, AgentConfig] = {
         "claude": {
             "check_dir": os.path.expanduser("~/.claude"),
-            "prefix": "",
+            "prefix": "/",
             "master_dest": os.path.join(dist_dir, "claude", "CLAUDE.md"),
             "commands_dest_dir": os.path.join(dist_dir, "claude", "commands"),
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.claude"), "CLAUDE.md"),
@@ -97,7 +97,7 @@ def main() -> None:
         },
         "codex": {
             "check_dir": os.path.expanduser("~/.codex"),
-            "prefix": "prompts:",
+            "prefix": "~/.codex/prompts/",
             "master_dest": os.path.join(dist_dir, "codex", "CODEX.md"),
             "commands_dest_dir": os.path.join(dist_dir, "codex", "prompts"),
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.codex"), "CODEX.md"),
@@ -107,7 +107,7 @@ def main() -> None:
         },
         "gemini": {
             "check_dir": os.path.expanduser("~/.gemini"),
-            "prefix": "",
+            "prefix": "/",
             "master_dest": os.path.join(dist_dir, "gemini", "GEMINI.md"),
             "commands_dest_dir": os.path.join(dist_dir, "gemini", "commands"),
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.gemini"), "GEMINI.md"),
@@ -117,7 +117,7 @@ def main() -> None:
         },
         "agents": {
             "check_dir": ".",  # Always exists
-            "prefix": "",
+            "prefix": "/",
             "master_dest": "AGENTS.md",
             "commands_dest_dir": "commands",
             "ext": ".md",

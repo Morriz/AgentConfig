@@ -1,11 +1,11 @@
 ---
 argument-hint: '[slug]'
-description: Worker command - merge, deploy, archive, cleanup after review passes
+description: Worker command - merge, archive, cleanup after review passes
 ---
 
 # Finalize Worker
 
-You are a **Worker AI**. Handle post-review bookkeeping: merge, deploy, archive, cleanup.
+You are a **Worker AI**. Handle post-review bookkeeping: merge, archive, cleanup.
 
 **Prerequisites**: Review must have APPROVE verdict in `todos/{slug}/review-findings.md`.
 
@@ -61,7 +61,7 @@ git push origin main
 Deploy to all computers:
 
 ```bash
-/deploy
+teleclaude__deploy_to_all_computers()
 ```
 
 Or use teleclaude__deploy_to_all_computers if available.
@@ -156,11 +156,6 @@ Item complete. Ready for next work.
 **If merge fails:**
 - Report conflict details
 - Do NOT force merge
-- Wait for Master guidance
-
-**If deploy fails:**
-- Report which computer(s) failed
-- Do NOT mark roadmap complete
 - Wait for Master guidance
 
 **If any step fails:**

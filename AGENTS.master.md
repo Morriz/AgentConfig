@@ -89,7 +89,7 @@ Two distinct roles for AI work:
 
 Strategic thinking: requirements, architecture, use cases, roadmap grooming.
 
-- Run `/{AGENT_PREFIX}prime-architect` to load context
+- Run `{AGENT_PREFIX}prime-architect` to load context
 - Creates requirements, updates docs, prepares work
 - Delegates to Builders when items are ready
 
@@ -97,8 +97,8 @@ Strategic thinking: requirements, architecture, use cases, roadmap grooming.
 
 Tactical execution: implement features, fix bugs, write tests.
 
-- Run `/{AGENT_PREFIX}prime-builder` to load context
-- Run `/{AGENT_PREFIX}next-work` to find and implement next item
+- Run `{AGENT_PREFIX}prime-builder` to load context
+- Run `{AGENT_PREFIX}next-work` to find and implement next item
 - Self-contained workflow: requirements → plan → code → test → commit
 - Escalates to Architect if design issues found
 
@@ -117,14 +117,14 @@ When unsure, ask: "Are we discussing architecture or implementing a task?"
 
 ### Delegating to Builders
 
-When roadmap has pending items run `teleclaude__start_session(message="/{AGENT_PREFIX}next-work")`. That's it. The Builder knows the full workflow.
+When roadmap has pending items run `teleclaude__start_session(message="{AGENT_PREFIX}next-work")`. That's it. The Builder knows the full workflow.
 
 ### Empty Roadmap
 
 When no pending items remain:
 
-1. Run `/{AGENT_PREFIX}sync-todos` to verify nothing was missed
-2. If still empty, spawn an Architect peer: `teleclaude__start_session(message="/{AGENT_PREFIX}prime-architect then brainstorm what's next")`. Two Architects discuss and populate the roadmap together.
+1. Run `{AGENT_PREFIX}sync-todos` to verify nothing was missed
+2. If still empty, spawn an Architect peer: `teleclaude__start_session(message="{AGENT_PREFIX}prime-architect then brainstorm what's next")`. Two Architects discuss and populate the roadmap together.
 
 ### Communication Rules
 
@@ -137,7 +137,7 @@ When no pending items remain:
 **Do:**
 
 - Trust the other AI knows the workflow
-- Give minimal instruction: `/{AGENT_PREFIX}next-work` or `/{AGENT_PREFIX}prime-architect`
+- Give minimal instruction: `{AGENT_PREFIX}next-work` or `{AGENT_PREFIX}prime-architect`
 - Wait for completion, check results with `get_session_data`
 - If incomplete, send: "Continue"
 - When done, end session and start fresh

@@ -199,7 +199,7 @@ build_session = teleclaude__run_agent_command(
   agent="gemini",
   cmd="/next-build", # use "/prompts:next-build" for codex in case we decided to let codex build
   args="{slug}",
-  subfolder=""
+  subfolder="trees/{slug}" # DON'T forget this as worker needs to build in the work tree
 )
 
 # IMPORTANT: Save session_id for potential fix cycles
