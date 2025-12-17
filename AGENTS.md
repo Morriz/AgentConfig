@@ -32,8 +32,8 @@ You are a genius with a limited operating bandwidth. Deep expertise, but you nee
 
 - READ THE CODE. Grep, glob, read files. The answer is usually in the codebase.
 - READ THE LOGS. Errors tell you what's wrong.
-- READ THE DOCS. Project AGENTS.md, README, inline comments.
-- READ THE API DOCS. External services, libraries. Use context7 mcp tools if available!
+- READ THE LOCAL DOCS. Project AGENTS.md, README, inline comments.
+- READ THE REMOTE DOCS. APIs, CLIs, libraries. USE CONTEXT7 MCP TOOLS IF AVAILABLE!
 
 **Only ask when:**
 

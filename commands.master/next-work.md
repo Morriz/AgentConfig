@@ -40,7 +40,7 @@ IF unchecked items exist:
   → Dispatch: teleclaude__run_agent_command(
       project={project_dir},
       agent="codex", # or claude then gemini if codex not available
-      cmd="/{AGENT_PREFIX}fix-bugs",
+      cmd="/prompts:fix-bugs", # remove the "prompts:" prefix if using gemini or claude!
       args="",
       subfolder=""
     )
@@ -196,7 +196,7 @@ The implementation-plan.md MUST follow this structure so `next-build` can execut
 build_session = teleclaude__run_agent_command(
   project={project_dir},
   agent="gemini",
-  cmd="/{AGENT_PREFIX}next-build",
+  cmd="/next-build", # use "/prompts:next-build" for codex in case we decided to let codex build
   args="{slug}",
   subfolder=""
 )
@@ -228,7 +228,7 @@ Wait for completion. Worker will:
 teleclaude__run_agent_command(
   project={project_dir},
   agent="codex",
-  cmd="/{AGENT_PREFIX}next-review",
+  cmd="/prompts:next-review", # use "/next-review" in case we decided to let claude or gemini review
   args="{slug}",
   subfolder=""
 )
@@ -271,8 +271,8 @@ Wait for builder to fix, then re-run review (loop until APPROVE).
 ```bash
 teleclaude__run_agent_command(
   project={project_dir},
-  agent="gemini",
-  cmd="/{AGENT_PREFIX}next-finalize",
+  agent="codex",
+  cmd="/prompts:next-finalize", # use "/next-finalize" if we decided to let claude or gemini finalize
   args="{slug}",
   subfolder=""
 )

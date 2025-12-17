@@ -14,12 +14,6 @@
         "@playwright/mcp@latest"
       ]
     },
-    "gmail": {
-      "command": "npx",
-      "args": [
-        "@shinzolabs/gmail-mcp"
-      ]
-    },
     "limitless": {
       "command": "npx",
       "args": [
