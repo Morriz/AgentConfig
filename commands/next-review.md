@@ -1,7 +1,6 @@
 ---
 argument-hint: '[slug]'
-description: Worker command - review code against requirements, output findings with
-  verdict
+description: Worker command - review code against requirements, output findings with verdict
 ---
 
 You are a **Reviewer AI**. Review code changes using specialized analysis. Outputs findings organized by severity.

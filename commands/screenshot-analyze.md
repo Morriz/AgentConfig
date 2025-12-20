@@ -1,6 +1,6 @@
 ---
-argument-hint: '[screenshot-path]'
 description: Analyze a screenshot provided by the user or the latest screenshot
+argument-hint: "[screenshot-path]"
 ---
 
 This command analyzes a screenshot provided by the user or the latest screenshot.

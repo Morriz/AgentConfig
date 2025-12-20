@@ -15,8 +15,23 @@ classifiers = [
   "Typing :: Typed",
 ]
 keywords = ["claude-code", "codex", "gemini", "hooks", "mcp"]
-dynamic = ["optional-dependencies"]
 requires-python = ">=3.11"
+dependencies = [
+  "python-frontmatter",
+  "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-xdist",
+  "pytest-asyncio",
+  "pytest-cov",
+  "mypy",
+  "pylint",
+  "black",
+  "isort",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

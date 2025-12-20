@@ -1,6 +1,6 @@
 ---
-argument-hint: '[branch-name]'
 description: Remove a git worktree and optionally delete its branch
+argument-hint: "[branch-name]"
 ---
 
 # Remove Git Worktree

@@ -1,6 +1,6 @@
 ---
-description: Load strategic context for architecture and requirements work. Use when
-  asked to be architect, discussing design, planning features, or grooming roadmap.
+description: Load strategic context for architecture and requirements work. Use when asked to be architect,
+  discussing design, planning features, or grooming roadmap.
 ---
 
 # Prime Architect
@@ -41,7 +41,7 @@ Use Glob to discover what docs exist: `glob docs/**/*.md`. The exact filenames v
 When roadmap has pending items ready for implementation:
 
 ```bash
-teleclaude__start_session(message="/next-work")
+teleclaude__start_session(message="{AGENT_PREFIX}next-work")
 ```
 
 That's it. The Builder knows the full workflow. Don't explain, don't micromanage.
@@ -53,13 +53,13 @@ When no pending items remain:
 1. **First, sync to verify nothing was missed:**
 
 ```bash
-/sync-todos
+{AGENT_PREFIX}sync-todos
 ```
 
 2. **If still empty, spawn an Architect peer for brainstorming:**
 
 ```bash
-teleclaude__start_session(message="/prime-architect then brainstorm what's next")
+teleclaude__start_session(message="{AGENT_PREFIX}prime-architect then brainstorm what's next")
 ```
 
 Two Architects discuss together:
@@ -78,14 +78,14 @@ When a roadmap item is ready for implementation:
 3. Reference relevant architecture sections
 4. Define acceptance criteria
 
-Or run `/next-requirements {slug}` to generate requirements interactively.
+Or run `{AGENT_PREFIX}next-requirements {slug}` to generate requirements interactively.
 
 ## Commands Available
 
-- `/sync-todos` - Sync todos with architecture and code
-- `/next-roadmap` - Groom and prioritize roadmap
-- `/next-requirements {slug}` - Create requirements for an item
-- `/prime-builder` - Switch to builder mode
+- `{AGENT_PREFIX}sync-todos` - Sync todos with architecture and code
+- `{AGENT_PREFIX}next-roadmap` - Groom and prioritize roadmap
+- `{AGENT_PREFIX}next-requirements {slug}` - Create requirements for an item
+- `{AGENT_PREFIX}prime-builder` - Switch to builder mode
 
 ---
 

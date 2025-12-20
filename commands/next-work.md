@@ -1,7 +1,6 @@
 ---
 argument-hint: '[slug]'
-description: Master orchestrator - assess state, converse for design, dispatch workers
-  for execution
+description: Master orchestrator - assess state, converse for design, dispatch workers for execution
 ---
 
 # Master Orchestrator
@@ -38,6 +37,7 @@ Progress is tracked implicitly through file existence and content:
 Read todos/bugs.md
 
 IF unchecked items exist:
+  → First read ~/.agents/commands/fix-bugs.md to understand the worker's process
   → Dispatch: teleclaude__run_agent_command(
       project={project_dir},
       agent="codex", # or claude then gemini if codex not available
@@ -193,6 +193,8 @@ The implementation-plan.md MUST follow this structure so `next-build` can execut
 
 **IF YES** - Dispatch build:
 
+First read `~/.agents/commands/next-build.md` to understand the worker's process. This enables you to take over manually if the worker fails or gets confused.
+
 ```bash
 build_session = teleclaude__run_agent_command(
   project={project_dir},
@@ -224,6 +226,8 @@ Wait for completion. Worker will:
 **Check**: Does `todos/{slug}/review-findings.md` exist with APPROVE verdict?
 
 **IF NOT or NOT APPROVED**:
+
+First read `~/.agents/commands/next-review.md` to understand the worker's process. This enables you to take over manually if the worker fails or gets confused.
 
 ```bash
 teleclaude__run_agent_command(
@@ -268,6 +272,8 @@ Wait for builder to fix, then re-run review (loop until APPROVE).
 **Check**: Is roadmap item still `[>]}` (not `[x]`)?
 
 **IF YES** - Dispatch finalize:
+
+First read `~/.agents/commands/next-finalize.md` to understand the worker's process. This enables you to take over manually if the worker fails or gets confused.
 
 ```bash
 teleclaude__run_agent_command(
@@ -314,6 +320,7 @@ When roadmap item is `[x]`:
 
 ## Important Notes
 
+- **Read command files before dispatching** - Always read the worker's command file first (e.g., `~/.agents/commands/next-build.md`). This enables manual takeover if the worker fails or gets confused.
 - **You orchestrate, workers execute** - Never do the building yourself
 - **Conversations for design** - Phases 2-3 are dialogues, not dispatches
 - **Be critical** - First answers are never complete

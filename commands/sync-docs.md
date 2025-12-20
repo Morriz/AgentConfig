@@ -1,7 +1,6 @@
 ---
-argument-hint: '[scope]'
-description: Inspect the codebase and update docs/ so it accurately reflects what
-  the code does. Use when docs might be stale or missing details.
+description: Inspect the codebase and update docs/ so it accurately reflects what the code does. Use when docs might be stale or missing details.
+argument-hint: "[scope]"
 ---
 
 # Sync Docs

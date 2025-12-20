@@ -1,6 +1,6 @@
 ---
-description: Load implementation context for coding. Use when given next-build command,
-  implementing features, fixing bugs, or working on specific tasks.
+description: Load implementation context for coding. Use when given next-build command, implementing features,
+  fixing bugs, or working on specific tasks.
 ---
 
 # Prime Builder
@@ -24,7 +24,7 @@ You are now the **Builder**. Your role is tactical: implement features according
 
 ## Start Working
 
-Run `/next-work` to find and implement the next roadmap item.
+Run `{AGENT_PREFIX}next-work` to find and implement the next roadmap item.
 
 The command is self-contained. It:
 
@@ -57,11 +57,11 @@ Before considering work done:
 
 ## Commands Available
 
-- `/next-work` - Find and implement next item (primary command)
-- `/next-implementation {slug}` - Create implementation plan for specific item
-- `/sync-todos` - Check if work is aligned
-- `/prime-architect` - Switch to architect mode (if design issues found)
+- `{AGENT_PREFIX}next-work` - Find and implement next item (primary command)
+- `{AGENT_PREFIX}next-implementation {slug}` - Create implementation plan for specific item
+- `{AGENT_PREFIX}sync-todos` - Check if work is aligned
+- `{AGENT_PREFIX}prime-architect` - Switch to architect mode (if design issues found)
 
 ---
 
-**You are now primed as Builder. Run `/next-work` to begin.**
+**You are now primed as Builder. Run `{AGENT_PREFIX}next-work` to begin.**

@@ -1,4 +1,4 @@
-#!/usr/bin/env .venv/bin/python
+#!/usr/bin/env -S uv run --quiet
 from __future__ import annotations
 
 import argparse
@@ -82,7 +82,7 @@ def main() -> None:
             command_map = cast(dict[str, dict[str, str]], json.load(f))
 
     master_agents_file = "AGENTS.master.md"
-    master_commands_dir = "commands.master"
+    master_commands_dir = "commands"
 
     agents_config: dict[str, AgentConfig] = {
         "claude": {
@@ -114,14 +114,6 @@ def main() -> None:
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.gemini"), "commands"),
             "ext": ".toml",
             "transform": transform_to_gemini,
-        },
-        "agents": {
-            "check_dir": ".",  # Always exists
-            "prefix": "/",
-            "master_dest": "AGENTS.md",
-            "commands_dest_dir": "commands",
-            "ext": ".md",
-            "transform": lambda p: frontmatter.dumps(p),
         },
     }
 
@@ -159,7 +151,7 @@ def main() -> None:
         os.makedirs(commands_dest_path, exist_ok=True)
 
         # Process AGENTS.master.md
-        agent_specific_file = f"AGENTS.{agent_name}.md"
+        agent_specific_file = f"PREFIX.{agent_name}.md"
         agent_specific_content = ""
         if os.path.exists(agent_specific_file):
             with open(agent_specific_file, "r") as extra_f:
@@ -175,7 +167,7 @@ def main() -> None:
         with open(master_dest_path, "w") as f:
             f.write(combined_agents_content)
 
-        # Process commands.master/*.md
+        # Process commands/*.md
         for command_file in command_files:
             with open(os.path.join(master_commands_dir, command_file), "r") as f:
                 try:

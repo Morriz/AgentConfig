@@ -1,8 +1,7 @@
 ---
-argument-hint: '[branch-name]'
 description: Create a git worktree in the trees/ directory
+argument-hint: "[branch-name]"
 ---
-
 # Create GitHub Issues from Implementation Plan
 
 You are tasked with converting an implementation plan into GitHub issues for parallel execution.

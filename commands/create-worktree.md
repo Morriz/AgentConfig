@@ -1,6 +1,6 @@
 ---
-argument-hint: '[branch-name]'
 description: Create a git worktree in the trees/ directory
+argument-hint: "[branch-name]"
 ---
 
 # Create Git Worktree

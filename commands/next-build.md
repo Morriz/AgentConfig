@@ -1,7 +1,6 @@
 ---
 argument-hint: '[slug]'
-description: Worker command - execute implementation plan, update checkboxes, commit
-  per task
+description: Worker command - execute implementation plan, update checkboxes, commit per task
 ---
 
 # Builder Worker

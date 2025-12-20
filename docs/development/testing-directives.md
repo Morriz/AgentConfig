@@ -59,17 +59,17 @@ When creating sessions for testing (not production use):
 When fixing bugs or making changes:
 
 1. **Run ONLY the specific failing test(s)** - not the entire suite
-2. **Use test file/module paths** - `.venv/bin/pytest tests/unit/test_foo.py -v`
-3. **Run single test methods** - `.venv/bin/pytest tests/unit/test_foo.py::TestClass::test_method -v`
+2. **Use test file/module paths** - `uv run pytest tests/unit/test_foo.py -v`
+3. **Run single test methods** - `uv run pytest tests/unit/test_foo.py::TestClass::test_method -v`
 
 **Examples:**
 
 ```bash
 # ✅ CORRECT - targeted test after fixing file_handler.py
-.venv/bin/pytest tests/unit/test_file_handler.py -v
+uv run pytest tests/unit/test_file_handler.py -v
 
 # ✅ CORRECT - single failing test
-.venv/bin/pytest tests/integration/test_file_upload.py::TestFileUploadFlow::test_file_upload_without_claude_code -v
+uv run pytest tests/integration/test_file_upload.py::TestFileUploadFlow::test_file_upload_without_claude_code -v
 
 # ❌ WRONG - running entire suite when you know which test failed
 make test  # DON'T do this during active debugging
@@ -90,16 +90,16 @@ make test  # DON'T do this during active debugging
 
 ```bash
 # ✅ CORRECT - unit tests with 3s timeout
-.venv/bin/pytest -n auto tests/unit/test_foo.py -v  # Use timeout=3000 in Bash tool
+uv run pytest -n auto tests/unit/test_foo.py -v  # Use timeout=3000 in Bash tool
 
 # ✅ CORRECT - integration tests with 15s timeout
-.venv/bin/pytest -n auto tests/integration/test_file_upload.py -v  # Use timeout=15000 in Bash tool
+uv run pytest -n auto tests/integration/test_file_upload.py -v  # Use timeout=15000 in Bash tool
 
 # ❌ WRONG - no parallel execution
-.venv/bin/pytest tests/unit/test_foo.py -v
+uv run pytest tests/unit/test_foo.py -v
 
 # ❌ WRONG - wrong timeout for test type
-.venv/bin/pytest -n auto tests/unit/test_foo.py -v  # Using timeout=15000 (too long!)
+uv run pytest -n auto tests/unit/test_foo.py -v  # Using timeout=15000 (too long!)
 ```
 
 **NEVER waste time waiting for tests - always use `-n auto` and appropriate timeout (3s for unit, 15s for integration).**

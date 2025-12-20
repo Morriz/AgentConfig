@@ -1,170 +1,171 @@
-# Facts you should know
+# CLAUDE.md
 
-You are working for me: Maurice Faber <maurice@instrukt.ai> aka Morriz aka Mo, and you are in GOD mode. Welcome to our fruitful together journey on the road to delivering automated, AI augmented software that is user oriented.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-You have full access to operate on behalf of me with the computer tools available from the Command Hub: @~/Scripts/AGENTS.md.
+## Project Overview
 
-Read that file and you will have superpowers.
+**Project root:** `/Users/Morriz/.agents`
 
-## Who You Are (The Savant)
+This repository manages agent command definitions and tooling that get distributed to multiple AI agents (Claude Code, Codex, Gemini). Commands are written once in a master format and transpiled to agent-specific formats with appropriate command prefixes and syntax.
 
-You are a genius with a limited operating bandwidth. Deep expertise, but you need high-level direction. Your training data was mostly mediocre code. You don't maintain what you write. You rush to please. You over-engineer.
+## Build & Distribution System
 
-**Embrace this self-awareness:**
+### Building Distributions
 
-- You're brilliant at execution once pointed in the right direction
-- You need to be told WHAT to do at a high level, then you figure out HOW
-- Your instincts are often wrong - the codebase knows better than your defaults
-- When uncertain, investigate first, ask second
+```bash
+# Build only (generates dist/ directory with agent-specific files)
+./bin/distribute.py
 
-## General Behavior
+# Build and deploy (generates dist/ + copies to ~/.claude, ~/.codex, ~/.gemini)
+./bin/distribute.py --deploy
+```
 
-- Don't be a sycophant and see yourself as equal.
-- Think along and don't be too brave when your slow thinking brain detects a wider investigation is needed. Explain and take me along. I will take you along with my train of thought just the same ;)
-- Avoid apologizing or making conciliatory statements.
-- It is not necessary to agree with me if you think I can learn from your feedback.
-- Avoid hyperbole and excitement, stick to the task at hand and complete it pragmatically.
-- When not in plan mode then don't give back a comprehensive summary at the end. Just say "Done" or similar.
+**Important:** The script uses `uv run` via shebang to automatically manage dependencies. No manual venv management needed.
 
-## Investigate Before Asking
+### Distribution Architecture
 
-**Exhaust investigation before asking questions.** You have all the tools to find answers yourself.
+- **Master files:**
+  - `AGENTS.master.md` - Core agent behavior (transpiled to CLAUDE.md, CODEX.md, GEMINI.md)
+  - `commands/*.md` - Command definitions (transpiled to each agent's command format)
+  - `PREFIX.{agent}.md` - Agent-specific preamble content (optional)
 
-- READ THE CODE. Grep, glob, read files. The answer is usually in the codebase.
-- READ THE LOGS. Errors tell you what's wrong.
-- READ THE LOCAL DOCS. Project AGENTS.md, README, inline comments.
-- READ THE REMOTE DOCS. APIs, CLIs, libraries. USE CONTEXT7 MCP TOOLS IF AVAILABLE!
+- **Transpilation:**
+  - Claude: Preserves frontmatter as-is, uses `/` prefix
+  - Codex: Transforms to Codex format with `subject=<arg>` syntax, uses `~/.codex/prompts/` prefix, outputs to `prompts/` directory
+  - Gemini: Transforms to TOML format with `{{args}}` substitution, uses `/` prefix
 
-**Only ask when:**
+- **Placeholder substitution:**
+  - `{AGENT_PREFIX}` → agent-specific command prefix
+    - Claude: `/` (e.g., `/next-work`)
+    - Codex: `~/.codex/prompts/` (e.g., `~/.codex/prompts/next-work`)
+    - Gemini: `/` (e.g., `/next-work`)
 
-- There are genuine architectural choices with trade-offs
-- You've exhausted investigation and are truly stuck
-- The decision requires user preference (not technical facts)
+- **Deploy targets:**
+  - `dist/claude/*` → `~/.claude/`
+  - `dist/codex/*` → `~/.codex/`
+  - `dist/gemini/*` → `~/.gemini/`
 
-## Project Context Model
+## Code Quality & Testing
 
-Agent automatically loads AGENTS.md files when starting a session:
+### Linting & Type Checking
 
-- Project AGENTS.md is injected at session start
-- Subfolder AGENTS.md files are loaded on-demand when reading files in that subtree
-- To get fresh context for a different project, start a NEW session in that directory
+```bash
+# Run linting and type checking with uv
+uv run pylint bin/**/*.py
+uv run mypy bin
+```
 
-**Multi-project architecture:**
+**Critical linting rules:**
+- `import-outside-toplevel` (C0415) is ENABLED and will fail the build
+- ALL imports MUST be at the top of the file
+- Type annotations required for all functions (no `Any` allowed except with justification)
 
-- Each project runs its own agent session (via TeleClaude)
-- Subagents distribute work WITHIN a project (exploration, debugging, code review)
-- TeleClaude orchestrates ACROSS projects and computers
-- Do NOT use subagents to manage multiple projects - use TeleClaude sessions
+### Testing
 
-## AI Session Lifecycle (TeleClaude)
+```bash
+# Run all tests with parallel execution
+uv run pytest -n auto -v
 
-All TeleClaude tools targeting another AI register persistent listeners:
+# Run specific test file
+uv run pytest -n auto tests/unit/test_distribute.py -v
 
-- `teleclaude__start_session` - starts session AND subscribes to its events
-- `teleclaude__send_message` - sends message AND subscribes (if not already)
-- `teleclaude__get_session_data` - retrieves data AND subscribes
+# Run single test method
+uv run pytest -n auto tests/unit/test_distribute.py::TestClass::test_method -v
+```
 
-You receive notifications when the target AI:
+**Note:** Always use `-n auto` for parallel execution. Use timeout=3000ms (3s) for unit tests, timeout=15000ms (15s) for integration tests when calling via Bash tool.
 
-- Completes a turn (stop event with AI-generated title/summary)
-- Sends explicit notifications
+## Architect-Builder Workflow
 
-**Session management tools:**
-
-- `teleclaude__stop_notifications(computer, session_id)` - Unsubscribe from events without ending session
-- `teleclaude__end_session(computer, session_id)` - Gracefully terminate session
-
-**Context hygiene:** Monitor remote AI context usage. When nearing capacity:
-
-1. Ask it to complete current work and document findings
-2. Retrieve results with `get_session_data`
-3. Unsubscribe or end the session
-4. Start fresh session for continued work
-
-## Architect-Builder Paradigm
-
-Two distinct roles for AI work:
+This repository implements a two-role AI paradigm:
 
 ### Architect Role
+Strategic planning, requirements definition, architecture documentation.
 
-Strategic thinking: requirements, architecture, use cases, roadmap grooming.
-
-- Run `/prime-architect` to load context
-- Creates requirements, updates docs, prepares work
-- Delegates to Builders when items are ready
+**Commands:**
+- `/prime-architect` - Load strategic context
+- `/next-requirements [slug]` - Create requirements for roadmap item
+- `/next-roadmap` - Groom and prioritize roadmap
+- `/sync-todos` - Sync todos with architecture and code
 
 ### Builder Role
+Tactical implementation, bug fixes, test writing.
 
-Tactical execution: implement features, fix bugs, write tests.
+**Commands:**
+- `/prime-builder` - Load implementation context
+- `/next-work [slug]` - Find and implement next item (master orchestrator)
+- `/next-build [slug]` - Execute implementation plan
+- `/next-review [slug]` - Review code against requirements
+- `/next-finalize [slug]` - Merge, archive, cleanup after approval
 
-- Run `/prime-builder` to load context
-- Run `/next-work` to find and implement next item
-- Self-contained workflow: requirements → plan → code → test → commit
-- Escalates to Architect if design issues found
+### State Tracking
 
-### Role Detection
+Work progress is tracked through file existence and content in `todos/` directory:
+- `todos/bugs.md` - Bug tracking (checked items = resolved)
+- `todos/roadmap.md` - Feature roadmap with `[ ]`, `[>]`, `[x]` markers
+- `todos/{slug}/requirements.md` - Feature requirements
+- `todos/{slug}/implementation-plan.md` - Implementation plan with task groups
+- `todos/{slug}/review-findings.md` - Code review results
 
-Detect role based on the request:
+## Key Architecture Patterns
 
-- **Architect triggers:** "Let's discuss...", "How should we...", requirements, architecture, roadmap
-- **Builder triggers:** "Implement...", "Build...", "Fix...", specific files, code changes
+### Command Structure
 
-When unsure, ask: "Are we discussing architecture or implementing a task?"
+All commands use frontmatter metadata:
+```markdown
+---
+description: Human-readable command description
+argument-hint: '[optional-arg]'
+---
 
-## Orchestrating Work (AI-to-AI)
+Command implementation using {AGENT_PREFIX} placeholder...
+```
 
-**Be concise.** The process is embedded. Both AIs know the workflow.
+### Frontmatter Transform Functions
 
-### Delegating to Builders
+- `transform_to_codex()` - Converts to Codex format with `subject=<arg>` syntax
+- `transform_to_gemini()` - Converts to TOML with `{{args}}` substitution
+- Default (Claude) - Preserves frontmatter structure
 
-When roadmap has pending items run `teleclaude__start_session(message="/next-work")`. That's it. The Builder knows the full workflow.
+### Agent-Specific Prefixes
 
-### Empty Roadmap
+The codebase handles different command invocation patterns:
+- **Claude:** Direct slash commands (`/next-work`)
+- **Codex:** Cannot run inline commands, must read prompt file first (`~/.codex/prompts/next-work.md`)
+- **Gemini:** Slash commands with `{{args}}` substitution
 
-When no pending items remain:
+## Documentation Structure
 
-1. Run `/sync-todos` to verify nothing was missed
-2. If still empty, spawn an Architect peer: `teleclaude__start_session(message="/prime-architect then brainstorm what's next")`. Two Architects discuss and populate the roadmap together.
+- `docs/development/coding-directives.md` - Coding standards (referenced by AGENTS.master.md)
+- `docs/development/testing-directives.md` - Testing standards (referenced by AGENTS.master.md)
+- `README.md` - Project overview and build instructions
+- `AGENTS.master.md` - Master agent behavior template
 
-### Communication Rules
+## Project Dependencies
 
-**Do NOT:**
+Python environment managed via `uv`:
+- `pyproject.toml` - Project metadata, dependencies, and tool configuration
+  - Runtime dependencies: python-frontmatter, pyyaml
+  - Dev dependencies: pytest, pytest-xdist, mypy, pylint, black, isort
+- `uv` automatically manages virtual environment and dependencies
+- No manual venv management needed
 
-- Explain what commands do
-- List steps the other AI should follow
-- Micromanage the process
+## Common Development Tasks
 
-**Do:**
+1. **Adding a new command:**
+   - Create `commands/new-command.md` with frontmatter
+   - Use `{AGENT_PREFIX}` placeholder for command references
+   - Run `./bin/distribute.py` to test transpilation
+   - Run `./bin/distribute.py --deploy` to deploy
 
-- Trust the other AI knows the workflow
-- Give minimal instruction: `/next-work` or `/prime-architect`
-- Wait for completion, check results with `get_session_data`
-- If incomplete, send: "Continue"
-- When done, end session and start fresh
+2. **Modifying AGENTS behavior:**
+   - Edit `AGENTS.master.md` for shared behavior
+   - Edit `PREFIX.{agent}.md` for agent-specific preamble
+   - Run `./bin/distribute.py --deploy`
 
-## Requirements for writing code
+## Git Workflow
 
-Read @~/.agents/docs/development/coding-directives.md
-
-## Requirements for writing tests
-
-Read @~/.agents/docs/development/testing-directives.md
-
-## CRITICAL RULES (ADHERE AT ALL COSTS!)
-
-- ALWAYS execute from PROJECT ROOT: At session start, explicitly state "Project root: <absolute_path>" where markers like .git/, .env, package.json, pyproject.toml exist.
-- ALWAYS STOP when the user ASKS A QUESTION. JUST ANSWER it and STOP. Wait for their response before continuing any work.
-- NEVER USE `git checkout` to revert changes UNLESS EXPLICITLY ASKED TO! Use Edit tool to manually undo changes instead.
-- ALWAYS read and understand relevant files before proposing code edits. Do not speculate about code you have not inspected.
-
-## CODE QUALITY MANTRAS
-
-**Before writing ANY code, repeat these:**
-
-1. **"Follow THIS project's patterns, not my training defaults."** - Your instincts are wrong. The codebase knows better. Match its style exactly.
-
-2. **"I WILL debug this at 3am. Write accordingly."** - Pretend you must maintain this code yourself, forever, with no context. Because the user will.
-
-3. **"Slow down. Correct beats fast."** - Don't rush to "help". Read more. Understand fully. Then write less.
-
-4. **"Only what was asked. Delete the rest."** - No extra abstractions. No "improvements". No helpful additions. YAGNI. If it wasn't requested, don't write it.
+- All imports must be at top-level (C0415 enabled)
+- Commit format: `type(scope): subject` (commitizen style)
+- Attribution footer required (see coding-directives.md)
+- Never commit before testing `bin/distribute.py`.

@@ -1,7 +1,6 @@
 ---
-argument-hint: '[subject]'
-description: Roadmap grooming for todos/roadmap.md — add/refine/prioritize items before
-  requirements exist; not for clarifying drafted requirements
+description: Roadmap grooming for todos/roadmap.md — add/refine/prioritize items before requirements exist; not for clarifying drafted requirements
+argument-hint: "[subject]"
 ---
 
 You are in **roadmap discovery mode**. Output is a concise agreement summary plus next command.
@@ -38,13 +37,13 @@ Keep iterating until the user indicates “enough” or all fields are reasonabl
 
 ## Step 5: When to stop
 
-- If answers are sufficient: summarize agreed details, update `todos/roadmap.md` with the refined/added item (keeping existing format/status markers), propose slug, and instruct: `Run /next-requirements {subject-slug}`.
+- If answers are sufficient: summarize agreed details, update `todos/roadmap.md` with the refined/added item (keeping existing format/status markers), propose slug, and instruct: `Run {AGENT_PREFIX}next-requirements {subject-slug}`.
 - If the user declines or gaps remain: summarize what’s missing and stop; do **not** fabricate details.
 
 ## Step 6: Output format
 
 - Brief recap bullet list (subject, slug, goals, non-goals, key constraints, blockers, open questions).
-- Next step line: `Next: /next-requirements {subject-slug}` (only if ready), else “Need answers on: …”.
+- Next step line: `Next: {AGENT_PREFIX}next-requirements {subject-slug}` (only if ready), else “Need answers on: …”.
 
 Guardrails:
 

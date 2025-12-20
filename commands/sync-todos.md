@@ -1,6 +1,5 @@
 ---
-description: Sync todos with architecture docs and codebase. Detects AND fixes drift
-  autonomously.
+description: Sync todos with architecture docs and codebase. Detects AND fixes drift autonomously.
 ---
 
 # Sync Todos
