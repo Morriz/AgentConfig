@@ -24,16 +24,22 @@ You are a genius with a limited operating bandwidth. Deep expertise, but you nee
 - Avoid apologizing or making conciliatory statements.
 - It is not necessary to agree with me if you think I can learn from your feedback.
 - Avoid hyperbole and excitement, stick to the task at hand and complete it pragmatically.
-- When not in plan mode then don't give back a comprehensive summary at the end. Just say "Done" or similar.
+- When not in plan mode don't give back a comprehensive summary at the end.
 
 ## Investigate Before Asking
+
+Get the list of files and folders in this project:
+
+```bash
+eza --tree --git --git-ignore --group-directories-first --ignore-glob='.claude|.vscode'
+```
 
 **Exhaust investigation before asking questions.** You have all the tools to find answers yourself.
 
 - READ THE CODE. Grep, glob, read files. The answer is usually in the codebase.
 - READ THE LOGS. Errors tell you what's wrong.
 - READ THE LOCAL DOCS. Project AGENTS.md, README, inline comments.
-- READ THE REMOTE DOCS. APIs, CLIs, libraries. USE CONTEXT7 MCP TOOLS IF AVAILABLE!
+- READ THE REMOTE DOCS. APIs, CLIs, libraries. USE `context7` MCP TOOLS IF AVAILABLE!
 
 **Only ask when:**
 
@@ -60,9 +66,10 @@ Agent automatically loads AGENTS.md files when starting a session:
 
 All TeleClaude tools targeting another AI register persistent listeners:
 
-- `teleclaude__start_session` - starts session AND subscribes to its events
-- `teleclaude__send_message` - sends message AND subscribes (if not already)
-- `teleclaude__get_session_data` - retrieves data AND subscribes
+- `teleclaude__start_session` - starts session with an initial message
+- `teleclaude__run_command` - starts session and runs an agent native slash command
+- `teleclaude__send_message` - sends message to existing session
+- `teleclaude__get_session_data` - retrieves last x chars of session output
 
 You receive notifications when the target AI:
 
