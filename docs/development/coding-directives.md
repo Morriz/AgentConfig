@@ -151,9 +151,10 @@ Use rsync or git stash for WIP, not commits.
    - CRITICAL: system-threatening failures
 3. Log input validation failures and all error paths.
 4. Include relevant context (IDs, paths, values) in messages for traceability.
-5. **When debugging**: Truncate log files before operations to isolate relevant output (e.g., `: > /var/log/app.log`).
+5. **When debugging**: Truncate log files before operations to isolate relevant output (e.g., `: > /var/log/instrukt-ai/teleclaude/teleclaude.log`).
 6. Never log sensitive data (passwords, tokens, PII, API keys).
-7. Use single-line text format; formatters are already configured. **Never use JSON logging**.
+7. When coding in Python use the InstruktAI logging directives: `~/.agents/docs/development/python/logging-directives-python.md`
+8. Use single-line text format; formatters are already configured. **Never use JSON logging**.
 
 ## Final Self-Check Before Emitting Code
 
