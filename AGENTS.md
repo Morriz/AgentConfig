@@ -1,10 +1,10 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to agents when working with code in this repository.
 
 ## Project Overview
 
-**Project root:** `/Users/Morriz/.agents`
+**Project root:** `~/.agents`
 
 This repository manages agent command definitions and tooling that get distributed to multiple AI agents (Claude Code, Codex, Gemini). Commands are written once in a master format and transpiled to agent-specific formats with appropriate command prefixes and syntax.
 
@@ -138,6 +138,7 @@ The codebase handles different command invocation patterns:
 
 - `docs/development/coding-directives.md` - Coding standards (referenced by AGENTS.master.md)
 - `docs/development/testing-directives.md` - Testing standards (referenced by AGENTS.master.md)
+- `docs/development/python/logging-directives-python.md` - Logging standards
 - `README.md` - Project overview and build instructions
 - `AGENTS.master.md` - Master agent behavior template
 
