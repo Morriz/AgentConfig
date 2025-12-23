@@ -70,26 +70,43 @@ ELSE:
 
 **Check**: Does `todos/{slug}/requirements.md` exist?
 
-**IF NOT** - Determine context:
+**IF NOT**:
 
-**Option A: Currently in discussion with user**
+1. **Determine driver**: Am I currently in conversation with user?
+   - YES → Continue discussion with user (user drives)
+   - NO → Start Codex session (I drive):
+     ```bash
+     teleclaude__start_session(
+       agent="codex",
+       title="{slug} - requirements",
+       message="Let's work out requirements for: {subject}
 
-Continue the conversation to work out requirements together:
+       Here's what I know from the roadmap: {roadmap item text}
 
-1. Think through:
+       Think through:
+       - What problem are we solving?
+       - What are the goals (must-have vs nice-to-have)?
+       - What's explicitly out of scope?
+       - What edge cases exist?
+       - What technical constraints apply?"
+     )
+     ```
+
+2. **Have critical dialogue** about requirements:
    - What problem are we solving?
    - What are the goals (must-have vs nice-to-have)?
    - What's explicitly out of scope?
    - What edge cases exist?
    - What technical constraints apply?
 
-2. **Be critical - REQUIRED feedback round**:
+3. **Be critical - REQUIRED**:
    - Challenge assumptions: "What about X?", "Did you consider Y?"
    - Probe for gaps: "What could go wrong?", "What did we miss?"
    - Force specificity: "Be more concrete about Z"
    - **Never accept first answer as complete** - always push for better
+   - **At least one feedback round is REQUIRED**
 
-3. When both agree requirements are complete:
+4. **When agreed**:
    - Create folder: `todos/{slug}/`
    - Write `todos/{slug}/requirements.md` with agreed content
    - **Commit to git**:
@@ -97,47 +114,8 @@ Continue the conversation to work out requirements together:
      git add todos/{slug}/requirements.md
      git commit -m "docs(requirements): add requirements for {slug}"
      ```
+   - End Codex session (if spawned)
    - Continue to Phase 3
-
-**Option B: Running standalone (no active discussion)**
-
-Start conversation with Codex:
-
-```bash
-teleclaude__start_session(
-  agent="codex",
-  title="{slug} - requirements",
-  message="Let's work out requirements for: {subject}
-
-Here's what I know from the roadmap: {roadmap item text}
-
-Think through:
-- What problem are we solving?
-- What are the goals (must-have vs nice-to-have)?
-- What's explicitly out of scope?
-- What edge cases exist?
-- What technical constraints apply?"
-)
-```
-
-**Dialogue rules** (be critical, not a pushover):
-- Never accept first answer as complete
-- Challenge: "What about X?", "Did you consider Y?"
-- Probe: "What could go wrong?", "What did we miss?"
-- Force specificity: "Be more concrete about Z"
-- Require agreement: "Do you agree this is complete?"
-- **At least one feedback round is REQUIRED**
-
-**When both agree**:
-1. Create folder: `todos/{slug}/`
-2. Write `todos/{slug}/requirements.md` with agreed content
-3. **Commit to git**:
-   ```bash
-   git add todos/{slug}/requirements.md
-   git commit -m "docs(requirements): add requirements for {slug}"
-   ```
-4. End Codex session
-5. Continue to Phase 3
 
 **IF EXISTS** → Continue to Phase 3
 
@@ -147,48 +125,46 @@ Think through:
 
 **Check**: Does `todos/{slug}/implementation-plan.md` exist?
 
-**IF NOT** - Determine context:
+**IF NOT**:
 
-**Option A: Currently in discussion with user**
+1. **Determine driver for direction**: Am I currently in conversation with user?
+   - YES → Discuss implementation direction with user:
+     - What's the overall approach?
+     - What are the main components/layers?
+     - Any architectural constraints or patterns to follow?
+     - What should be prioritized?
+     - **Be critical** - challenge approach, question assumptions
+     - Reach agreement on direction
+   - NO → Skip to step 2 (Codex will work from requirements alone)
 
-1. Discuss **implementation direction** with user:
-   - What's the overall approach?
-   - What are the main components/layers?
-   - Any architectural constraints or patterns to follow?
-   - What should be prioritized?
+2. **Spawn Codex for detailed planning**:
+   ```bash
+   teleclaude__start_session(
+     agent="codex",
+     title="{slug} - planning",
+     message="Requirements are in todos/{slug}/requirements.md.
 
-2. **Be critical - REQUIRED feedback round**:
-   - Challenge the approach: "Why this over Y?"
-   - Question assumptions: "What if Z happens?"
-   - **Never accept first direction as complete** - refine it
+     {IF user discussion happened: "Implementation direction: {summary of agreed approach}"}
 
-3. When agreed on direction, **spawn Codex with full context**:
+     {IF standalone: "Let's break this into implementation tasks."}
 
-```bash
-teleclaude__start_session(
-  agent="codex",
-  title="{slug} - planning",
-  message="Requirements are in todos/{slug}/requirements.md.
+     Think through:
+     - What are the logical task groups?
+     - What can run in parallel vs sequential?
+     - What files to create/modify?
+     - What are the dependencies between tasks?
+     - What could block us?"
+   )
+   ```
 
-Here's the implementation direction we agreed on:
-{detailed summary of user discussion}
-
-Now flesh this out into a detailed implementation plan. Think through:
-- What are the logical task groups?
-- What can run in parallel vs sequential?
-- What files to create/modify?
-- What are the dependencies between tasks?
-- What could block us?"
-)
-```
-
-4. **Critical dialogue with Codex - REQUIRED**:
+3. **Have critical dialogue with Codex**:
    - Challenge task breakdown
    - Question parallelization assumptions
    - Ensure testing coverage
-   - **At least one feedback round** before accepting
+   - **Never accept first answer as complete**
+   - **At least one feedback round is REQUIRED**
 
-5. When both agree:
+4. **When agreed**:
    - Write `todos/{slug}/implementation-plan.md` following the builder contract below
    - **Commit to git**:
      ```bash
@@ -197,42 +173,6 @@ Now flesh this out into a detailed implementation plan. Think through:
      ```
    - End Codex session
    - Continue to Phase 4
-
-**Option B: Running standalone (no active discussion)**
-
-Start conversation with Codex:
-
-```bash
-teleclaude__start_session(
-  agent="codex",
-  title="{slug} - planning",
-  message="Requirements are in todos/{slug}/requirements.md.
-
-Let's break this into implementation tasks. Think through:
-- What are the logical task groups?
-- What can run in parallel vs sequential?
-- What files to create/modify?
-- What are the dependencies between tasks?
-- What could block us?"
-)
-```
-
-**Dialogue rules** (same as Phase 2):
-- Challenge task breakdown
-- Question parallelization assumptions
-- Ensure testing tasks included
-- Require agreement before writing
-- **At least one feedback round is REQUIRED**
-
-**When both agree**:
-1. Write `todos/{slug}/implementation-plan.md` following the builder contract below
-2. **Commit to git**:
-   ```bash
-   git add todos/{slug}/implementation-plan.md
-   git commit -m "docs(planning): add implementation plan for {slug}"
-   ```
-3. End Codex session
-4. Continue to Phase 4
 
 ### Implementation Plan Structure (Builder Contract)
 
