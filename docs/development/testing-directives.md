@@ -1,48 +1,6 @@
-# LLM Testing Directives (Unified Edition)
+# Testing Directives
 
-Purpose: Define testing standards and quality gates  not implementation details. Apply in every project unless configuration explicitly overrides.
-
-## 0. Real-World Testing (Multi-Computer Systems)
-
-**CRITICAL: Automated tests alone are INSUFFICIENT. Real-world testing on actual target hardware is MANDATORY.**
-
-For multi-computer systems (TeleClaude, distributed services, embedded systems):
-
-### Development Workflow
-
-1. **Make changes locally** - write code, run targeted automated tests
-2. **Rsync to target computer(s)** - sync during development, not after:
-
-   ```bash
-   # Use shorthand from config.yml (e.g., raspi, raspi4)
-   bin/rsync.sh <computer-name>
-
-   # Then restart daemon on remote
-   ssh -A user@hostname 'cd $HOME/apps/TeleClaude && make restart'
-   ```
-
-3. **Real-world testing** - create TEST sessions to verify actual behavior:
-   - Use `teleclaude__start_session` with title: `"TEST: {what you're testing}"`
-   - Example: `"TEST: session lookup"` → generates channel: `$MozBook > $RasPi[apps/TeleClaude] - TEST: session lookup`
-   - Manually verify the feature works on real hardware
-4. **Only commit if real-world testing passes** - automated tests + real hardware verification
-
-### Why This Matters
-
-- Automated tests verify logic in isolation
-- Real hardware reveals: timing issues, platform differences, network behavior, actual user experience
-- **Critical:** If it doesn't work on real hardware, automated tests passing is meaningless.
-
-### TEST Session Naming Convention
-
-When creating sessions for testing (not production use):
-
-- **Always prefix with `TEST:`** to distinguish from production sessions
-- Be specific about what you're testing
-- Examples:
-  - `"TEST: voice transcription"`
-  - `"TEST: file upload to Claude"`
-  - `"TEST: session cleanup after tmux exit"`
+Purpose: Define testing standards and quality gates - not implementation details. Apply in every project unless configuration explicitly overrides.
 
 ## 1. Pre-Commit Quality Gates
 
@@ -75,11 +33,9 @@ uv run pytest tests/integration/test_file_upload.py::TestFileUploadFlow::test_fi
 make test  # DON'T do this during active debugging
 ```
 
-**Running the full test suite when you know the specific failing test is wasteful and inefficient.**
-
 ### **CRITICAL: Always Use Parallel Execution with Bash Timeout**
 
-**Every test invocation MUST include:**
+**Every multi test invocation MUST include:**
 
 - `-n auto` for parallel execution (pytest-xdist)
 - **Bash tool timeout based on test type:**
@@ -102,7 +58,7 @@ uv run pytest tests/unit/test_foo.py -v
 uv run pytest -n auto tests/unit/test_foo.py -v  # Using timeout=15000 (too long!)
 ```
 
-**NEVER waste time waiting for tests - always use `-n auto` and appropriate timeout (3s for unit, 15s for integration).**
+**NEVER waste time waiting for tests - always use `-n auto` for multiple tests and appropriate timeout (3s for unit, 15s for integration).**
 
 ## 1. Test Organization
 
@@ -114,28 +70,28 @@ uv run pytest -n auto tests/unit/test_foo.py -v  # Using timeout=15000 (too long
 
 ## 2. Test Quality
 
-1. **Test behavior, not implementation**  tests should validate outcomes, not internal mechanics.
-2. **One assertion per test**  focus each test on a single expected outcome.
-3. **Arrange-Act-Assert pattern**  set up, execute, verify.
-4. **No logic in tests**  avoid conditionals, loops, or complex calculations.
-5. **Tests must be deterministic**  same input always produces same output.
-6. **Fast tests**  keep unit tests under 100ms each when possible.
+1. **Test behavior, not implementation** - tests should validate outcomes, not internal mechanics.
+2. **One assertion per test** - focus each test on a single expected outcome.
+3. **Arrange-Act-Assert pattern** - set up, execute, verify.
+4. **No logic in tests** - avoid conditionals, loops, or complex calculations.
+5. **Tests must be deterministic** - same input always produces same output.
+6. **Fast tests** - keep unit tests under 100ms each when possible.
 
 ## 3. Test Coverage Priorities
 
-1. **Edge cases over happy paths**  boundary conditions are where bugs hide.
-2. **Error conditions**  test all error paths and exception handling.
-3. **Integration points**  test boundaries between systems/modules.
-4. **Public interfaces**  test exported functions, classes, and APIs.
-5. **Do NOT test private methods**  they're implementation details.
+1. **Edge cases over happy paths** - boundary conditions are where bugs hide.
+2. **Error conditions** - test all error paths and exception handling.
+3. **Integration points** - test boundaries between systems/modules.
+4. **Public interfaces** - test exported functions, classes, and APIs.
+5. **Do NOT test private methods** - they're implementation details.
 
 ## 4. Mocking & Dependencies
 
 1. Mock at **architectural boundaries**, not internal functions.
 2. Use real objects for simple dependencies.
 3. Stub external services (APIs, databases, file systems).
-4. **Never mock what you don't own**  wrap third-party code in adapters.
-5. Avoid over-mocking  it couples tests to implementation.
+4. **Never mock what you don't own** - wrap third-party code in adapters.
+5. Avoid over-mocking - it couples tests to implementation.
 
 ## 5. Test Naming
 
@@ -164,8 +120,8 @@ uv run pytest -n auto tests/unit/test_foo.py -v  # Using timeout=15000 (too long
 
 ## 8. Linting & Type Checking
 
-1. **Run linters before committing**  fix all violations.
-2. **Run type checkers before committing**  resolve all errors.
+1. **Run linters before committing** - fix all violations.
+2. **Run type checkers before committing** - resolve all errors.
 3. **Never suppress lint/type errors** unless absolutely necessary and documented.
 4. Common lint violations that MUST be fixed:
    - Unused imports
@@ -183,21 +139,22 @@ uv run pytest -n auto tests/unit/test_foo.py -v  # Using timeout=15000 (too long
 
 ## 9. Test Isolation
 
-1. Each test runs independently  no shared state between tests.
+1. Each test runs independently - no shared state between tests.
 2. Tests can run in any order.
 3. Use fresh instances/data for each test.
-4. Reset mocks between tests.
-5. Clean up global state in teardown.
+4. Use mocks for all deps / boundaries to focus on code under test.
+1. Reset mocks between tests.
+2. Clean up global state in teardown.
 
 ## 10. Testing Anti-Patterns to Avoid
 
-1. **Flaky tests**  non-deterministic tests that pass/fail randomly.
-2. **Slow tests**  tests that take seconds to run (indicates integration, not unit).
-3. **Testing implementation details**  tests that break when refactoring.
-4. **Over-mocking**  mocking everything makes tests brittle.
-5. **Mega tests**  one test that validates many behaviors.
-6. **No assertions**  tests that execute code but don't verify outcomes.
-7. **Commented-out tests**  either fix or delete them.
+1. **Flaky tests** - non-deterministic tests that pass/fail randomly.
+2. **Slow tests** - tests that take seconds to run (indicates integration, not unit).
+3. **Testing implementation details** - tests that break when refactoring.
+4. **Over-mocking** - mocking everything makes tests brittle.
+5. **Mega tests** - one test that validates many behaviors.
+6. **No assertions** - tests that execute code but don't verify outcomes.
+7. **Commented-out tests** - either fix or delete them.
 
 ## 11. Continuous Integration Standards
 
@@ -221,11 +178,6 @@ Before committing code, verify:
 - [ ] Edge cases and error conditions tested
 - [ ] No commented-out code or tests
 - [ ] Pre-commit hooks pass without warnings
-- [ ] **Real-world testing complete** (multi-computer systems only):
-  - [ ] Code rsync'd to target computer(s)
-  - [ ] Daemon restarted on remote
-  - [ ] TEST session created and verified working
-  - [ ] Feature works on actual hardware
 
 ## Final Self-Check Before Committing
 

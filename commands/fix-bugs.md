@@ -39,13 +39,17 @@ Process bugs in order (top to bottom):
 - Read related files
 - Identify root cause
 
-### 2.3 Fix
+### 2.3 Update bugs.md
+
+Change `[ ]` to `[>]` to set bug fix in progress.
+
+### 2.4 Fix
 
 - Make minimal changes to fix the issue
 - Don't refactor unrelated code
 - Don't add features
 
-### 2.4 Test
+### 2.5 Test
 
 ```
 make test
@@ -55,11 +59,11 @@ Or equivalent. Verify:
 - Bug is fixed
 - No regressions introduced
 
-### 2.5 Update bugs.md
+### 2.6 Update bugs.md
 
 Change `[ ]` to `[x]` for the fixed bug.
 
-### 2.6 Commit
+### 2.7 Commit
 
 One commit per bug fixed.
 

@@ -66,3 +66,26 @@ export INSTRUKT_AI_LOG_ROOT="$PWD/logs"
 ```
 
 This changes the target path to: `$INSTRUKT_AI_LOG_ROOT/{app}/{app}.log`.
+
+## Logging routine (TeleClaude standard)
+
+Use levels consistently so logs stay tail-friendly and meaningful.
+
+### Levels
+
+- **INFO**: Business-relevant events (user-visible state changes, lifecycle milestones, deploy status).
+- **DEBUG**: Successful outcomes (one line per operation; include duration/summary).
+- **TRACE**: High-volume or step-by-step chatter (start lines, loop ticks, raw payloads).
+- **WARNING**: Recoverable anomalies (retries, unexpected states, missing optional data).
+- **ERROR/CRITICAL**: Failures or contract violations that should be fixed.
+
+### Start/End pairs
+
+- Prefer **one line** per operation: log the *completion* at DEBUG with duration.
+- If you keep a start line, log it at TRACE and keep the completion at DEBUG.
+
+### Consistency
+
+- Reuse the same message template for the same event.
+- Favor structured key/value pairs (e.g., `event=heartbeat_sent`, `duration_ms=...`).
+- Throttle or aggregate repetitive logs; identical messages aggregate better.

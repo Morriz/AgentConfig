@@ -64,19 +64,14 @@ For each applicable aspect, analyze the changes:
 
 - Follows existing patterns in codebase
 - No unnecessary abstractions
-- Functions are focused and small
-- No code duplication
-- Types explicit (no `Any`/`any`)
-- Null/undefined handled properly
-- Error cases handled, not swallowed
+- Follows coding directives
 
 ### tests (Test Quality)
 
 - Tests behavior, not implementation
 - One assertion per test
 - Edge cases covered
-- Mocks only at boundaries
-- No testing of private methods
+- Follows testing directives
 
 ### errors (Error Handling)
 
@@ -85,13 +80,6 @@ For each applicable aspect, analyze the changes:
 - No swallowed exceptions
 - Fail-fast where appropriate
 - Recovery logic explicit
-
-### types (Type Design)
-
-- Types express invariants
-- No `any` or `Any`
-- Illegal states unrepresentable
-- Validation at boundaries
 
 ### comments (Documentation)
 

@@ -47,14 +47,6 @@ eza --tree --git --git-ignore --group-directories-first --ignore-glob='.claude|.
 - You've exhausted investigation and are truly stuck
 - The decision requires user preference (not technical facts)
 
-## Project Context Model
-
-Agent automatically loads AGENTS.md files when starting a session:
-
-- Project AGENTS.md is injected at session start
-- Subfolder AGENTS.md files are loaded on-demand when reading files in that subtree
-- To get fresh context for a different project, start a NEW session in that directory
-
 **Multi-project architecture:**
 
 - Each project runs its own agent session (via TeleClaude)
@@ -67,14 +59,11 @@ Agent automatically loads AGENTS.md files when starting a session:
 All TeleClaude tools targeting another AI register persistent listeners:
 
 - `teleclaude__start_session` - starts session with an initial message
-- `teleclaude__run_command` - starts session and runs an agent native slash command
+- `teleclaude__run_agent_command` - starts session and runs an agent native slash command
 - `teleclaude__send_message` - sends message to existing session
 - `teleclaude__get_session_data` - retrieves last x chars of session output
 
-You receive notifications when the target AI:
-
-- Completes a turn (stop event with AI-generated title/summary)
-- Sends explicit notifications
+You receive notifications when the target AI completes a turn (stop event with AI-generated title/summary)
 
 **Session management tools:**
 
@@ -97,7 +86,7 @@ Two distinct roles for AI work:
 Strategic thinking: requirements, architecture, use cases, roadmap grooming.
 
 - Run `{AGENT_PREFIX}prime-architect` to load context
-- Creates requirements, updates docs, prepares work
+- Creates requirements, updates docs, prepares work in todos/{subject-slug}/
 - Delegates to Builders when items are ready
 
 ### Builder Role
@@ -105,8 +94,7 @@ Strategic thinking: requirements, architecture, use cases, roadmap grooming.
 Tactical execution: implement features, fix bugs, write tests.
 
 - Run `{AGENT_PREFIX}prime-builder` to load context
-- Run `{AGENT_PREFIX}next-work` to find and implement next item
-- Self-contained workflow: requirements → plan → code → test → commit
+- Self-contained workflow: implementation plan → code + tests → test → commit
 - Escalates to Architect if design issues found
 
 ### Role Detection
@@ -115,39 +103,6 @@ Detect role based on the request:
 
 - **Architect triggers:** "Let's discuss...", "How should we...", requirements, architecture, roadmap
 - **Builder triggers:** "Implement...", "Build...", "Fix...", specific files, code changes
-
-When unsure, ask: "Are we discussing architecture or implementing a task?"
-
-## Orchestrating Work (AI-to-AI)
-
-**Be concise.** The process is embedded. Both AIs know the workflow.
-
-### Delegating to Builders
-
-When roadmap has pending items run `teleclaude__start_session(message="{AGENT_PREFIX}next-work")`. That's it. The Builder knows the full workflow.
-
-### Empty Roadmap
-
-When no pending items remain:
-
-1. Run `{AGENT_PREFIX}sync-todos` to verify nothing was missed
-2. If still empty, spawn an Architect peer: `teleclaude__start_session(message="{AGENT_PREFIX}prime-architect then brainstorm what's next")`. Two Architects discuss and populate the roadmap together.
-
-### Communication Rules
-
-**Do NOT:**
-
-- Explain what commands do
-- List steps the other AI should follow
-- Micromanage the process
-
-**Do:**
-
-- Trust the other AI knows the workflow
-- Give minimal instruction: `{AGENT_PREFIX}next-work` or `{AGENT_PREFIX}prime-architect`
-- Wait for completion, check results with `get_session_data`
-- If incomplete, send: "Continue"
-- When done, end session and start fresh
 
 ## Requirements for writing code
 

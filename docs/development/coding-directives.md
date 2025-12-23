@@ -44,7 +44,7 @@ Purpose: Define what to produce — not why. Apply in every project unless confi
 ## 4. State & Dependencies
 
 1. Prefer module-level state over class instance state.
-2. Use immutable data for shared state.
+2. All data is immutable. Never mutate inputs or shared state—always replace with new values.
 3. Avoid global mutable state except defined singletons.
 4. Initialize state explicitly, never on import.
 5. Pass dependencies explicitly; don’t hide them in globals.
@@ -93,11 +93,7 @@ Purpose: Define what to produce — not why. Apply in every project unless confi
 
 ## 9. Testing
 
-1. Test behavior, not implementation.
-2. One assertion per test; name tests for expected outcome.
-3. Mock only at architectural boundaries.
-4. Don’t test private or internal methods directly.
-5. Focus on edge cases more than happy paths.
+Follow the Testing Directives: `~/.agents/docs/development/testing-directives.md`
 
 ## 10. Output Discipline
 
@@ -108,28 +104,6 @@ Purpose: Define what to produce — not why. Apply in every project unless confi
 
 ## 11. Git Commits
 
-**Git is version control, not a backup tool. Commits must be atomic, complete, and working.**
-
-1. **Format**: `type(scope): subject` (commitizen)
-   - Types: feat, fix, refactor, style, docs, test, chore, perf
-   - Subject: imperative, lowercase, no period, max 72 chars
-2. **Attribution footer**:
-
-   ```text
-   🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-   Co-Authored-By: Claude <noreply@anthropic.com>
-   ```
-
-### Commit Standards
-
-**Atomic commits (Unix philosophy): Do ONE thing completely and well.**
-
-- ✅ "feat(auth): add JWT validation" - complete feature
-- ✅ "fix(api): handle null response" - one bug
-- ❌ "fix bugs and add features" - not atomic
-- ❌ "WIP" or "quick save" - not complete
-
 **Pre-commit hooks enforce tests/linting/formatting automatically.**
 
 Only commit when:
@@ -138,7 +112,15 @@ Only commit when:
 - Code works (hooks will verify)
 - No debug/temp code
 
-Use rsync or git stash for WIP, not commits.
+Use commitizen format:
+
+```
+type(scope): subject
+
+🤖 Generated with [TeleClaude](https://github.com/InstruktAI/TeleClaude)
+
+Co-Authored-By: TeleClaude <noreply@instrukt.ai>
+```
 
 ## 12. Logging & Observability
 

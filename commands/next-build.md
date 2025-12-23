@@ -9,6 +9,8 @@ You are a **Worker AI**. Execute the implementation plan precisely. You have no 
 
 Slug given: "$ARGUMENTS"
 
+Now read ~/.agents/commands/prime-builder.md for detailed instructions on your role and tasks.
+
 ---
 
 ## Step 1: Load Context
@@ -65,27 +67,10 @@ For each task:
    - Debug and fix
    - Re-run tests until passing
 5. Update checkbox: [ ] → [x] in todos/{slug}/implementation-plan.md
-6. Commit both code AND checkbox update together:
-   git add -A && git commit -m "type(scope): description"
+6. Commit both code AND checkbox update together
 ```
 
 **IMPORTANT**: One commit per completed task. Code + checkbox in same commit.
-
----
-
-## Step 4: Commit Message Format
-
-Use commitizen format:
-
-```
-type(scope): subject
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
 
 ---
 

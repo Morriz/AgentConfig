@@ -127,9 +127,9 @@ git commit -m "chore({slug}): finalize delivery
 - Updated roadmap
 - Logged to delivered.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+🤖 Generated with [TeleClaude](https://github.com/InstruktAI/TeleClaude)
 
-Co-Authored-By: Claude <noreply@anthropic.com>"
+Co-Authored-By: TeleClaude <noreply@instrukt.ai>"
 
 git push origin main
 ```

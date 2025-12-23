@@ -83,7 +83,10 @@ ELSE:
 
        Here's what I know from the roadmap: {roadmap item text}
 
-       Think through:
+       First I want you to read ~/.agents/commands/prime-architect.md and take on the architect role with me.
+       Then read ALL you think you need to be able to join this conversation. Take your time and be diligent.
+
+       Then think through:
        - What problem are we solving?
        - What are the goals (must-have vs nice-to-have)?
        - What's explicitly out of scope?
@@ -114,7 +117,7 @@ ELSE:
      git add todos/{slug}/requirements.md
      git commit -m "docs(requirements): add requirements for {slug}"
      ```
-   - End Codex session (if spawned)
+   - Keep Codex session (if spawned) for next phase.
    - Continue to Phase 3
 
 **IF EXISTS** → Continue to Phase 3
@@ -138,33 +141,40 @@ ELSE:
    - NO → Skip to step 2 (Codex will work from requirements alone)
 
 2. **Spawn Codex for detailed planning**:
-   ```bash
-   teleclaude__start_session(
-     agent="codex",
-     title="{slug} - planning",
-     message="Requirements are in todos/{slug}/requirements.md.
 
-     {IF user discussion happened: "Implementation direction: {summary of agreed approach}"}
+  Use teleclaude__send_message instead of teleclaude__start_session if continuing existing session:
+  ```bash
+  teleclaude__start_session(
+    agent="codex",
+    title="{slug} - planning",
+    message="Requirements are in todos/{slug}/requirements.md.
 
-     {IF standalone: "Let's break this into implementation tasks."}
+    {IF user discussion happened: "Implementation direction: {summary of agreed approach}"}
 
-     Think through:
-     - What are the logical task groups?
-     - What can run in parallel vs sequential?
-     - What files to create/modify?
-     - What are the dependencies between tasks?
-     - What could block us?"
-   )
-   ```
+    {IF standalone: "Let's break this into implementation tasks."}
 
-3. **Have critical dialogue with Codex**:
+    {IF new codex session:}
+    But first I want you to read ~/.agents/commands/prime-architect.md and take on the architect role with me.
+    Then read ALL you think you need to be able to join this conversation. Take your time and be diligent.
+    {ENDIF}
+
+    Think through:
+    - What are the logical task groups?
+    - What can run in parallel vs sequential?
+    - What files to create/modify?
+    - What are the dependencies between tasks?
+    - What could block us?"
+  )
+  ```
+
+1. **Have critical dialogue with Codex**:
    - Challenge task breakdown
    - Question parallelization assumptions
    - Ensure testing coverage
    - **Never accept first answer as complete**
    - **At least one feedback round is REQUIRED**
 
-4. **When agreed**:
+2. **When agreed**:
    - Write `todos/{slug}/implementation-plan.md` following the builder contract below
    - **Commit to git**:
      ```bash
@@ -260,12 +270,28 @@ build_session = teleclaude__run_agent_command(
 # The build session stays alive for fixes after review
 ```
 
-Wait for completion. Worker will:
+Wait for completion. Worker should:
 - Read requirements and implementation plan
 - Execute task groups
 - Update checkboxes
 - Commit per task
 - NOT merge
+- 
+### Communication Rules
+
+**Do NOT:**
+
+- Explain what commands do
+- List steps the other AI should follow
+
+**Do:**
+
+- Trust the other AI knows the workflow
+- Wait for completion, check results with `get_session_data`, and determine steps were followed
+- If steps were missed or errors occurred, provide feedback for correction
+- If incomplete, send: "Continue"
+- When done, end session and start fresh
+
 
 **KEEP BUILD SESSION ALIVE** - Do NOT end it. Fixes after review go back to this session.
 
@@ -282,19 +308,19 @@ Wait for completion. Worker will:
 First read `~/.agents/commands/next-review.md` to understand the worker's process. This enables you to take over manually if the worker fails or gets confused.
 
 ```bash
-teleclaude__run_agent_command(
+review_session = teleclaude__run_agent_command(
   project={project_dir},
   agent="codex",
   cmd="/prompts:next-review", # use "/next-review" in case we decided to let claude or gemini review
   args="{slug}",
-  subfolder=""
+  subfolder="trees/{slug}" # review happens in the same worktree as build
 )
 ```
 
 Wait for completion. Codex will:
 - Review code against requirements
 - Check quality, security, tests
-- Write findings with verdict
+- Write findings with verdict to todos/{slug}/review-findings.md
 
 **IF CRITICAL ISSUES** - Send fixes to SAME build session:
 
@@ -305,16 +331,17 @@ teleclaude__send_message(
   session_id=build_session.id,
   message="Review found issues. Fix these:
 
-  {list critical issues from review-findings.md}
+  todos/{slug}/review-findings.md
 
   After fixing, update checkboxes and commit."
 )
 ```
 
-Wait for builder to fix, then re-run review (loop until APPROVE).
+Wait for builder to fix, then re-run review in the same `review_session.id` session (loop until APPROVE).
 
 **IF APPROVED**:
 - End the build session: `teleclaude__end_session(build_session.id)`
+- End the review session: `teleclaude__end_session(review_session.id)`
 - Continue to Phase 6
 
 ---
@@ -372,7 +399,7 @@ When roadmap item is `[x]`:
 
 ## Important Notes
 
-- **Read command files before dispatching** - Always read the worker's command file first (e.g., `~/.agents/commands/next-build.md`). This enables manual takeover if the worker fails or gets confused.
+- **Read command files before dispatching** - Always read the worker's command file first if you haven't (e.g., `~/.agents/commands/next-build.md`). This enables manual takeover if the worker fails or gets confused.
 - **You orchestrate, workers execute** - Never do the building yourself
 - **Conversations for design** - Phases 2-3 are dialogues, not dispatches
 - **Be critical** - First answers are never complete

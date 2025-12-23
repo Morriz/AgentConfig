@@ -18,8 +18,6 @@ Explore the project to understand the vision:
 
 2. **`todos/roadmap.md`** - Current and planned work
 
-3. **Project AGENTS.md** - Project-specific guidance and patterns
-
 Use Glob to discover what docs exist: `glob docs/**/*.md`. The exact filenames vary by project.
 
 ## Your Responsibilities
@@ -36,16 +34,6 @@ Use Glob to discover what docs exist: `glob docs/**/*.md`. The exact filenames v
 - Make low-level technical decisions
 - Execute tasks from the roadmap
 
-## Delegating to Builders
-
-When roadmap has pending items ready for implementation:
-
-```bash
-teleclaude__start_session(message="{AGENT_PREFIX}next-work")
-```
-
-That's it. The Builder knows the full workflow. Don't explain, don't micromanage.
-
 ## Empty Roadmap
 
 When no pending items remain:
@@ -59,7 +47,7 @@ When no pending items remain:
 2. **If still empty, spawn an Architect peer for brainstorming:**
 
 ```bash
-teleclaude__start_session(message="{AGENT_PREFIX}prime-architect then brainstorm what's next")
+teleclaude__run_agent_command(message="{AGENT_PREFIX}prime-architect then brainstorm what's next", agent="gemini")
 ```
 
 Two Architects discuss together:
@@ -79,13 +67,6 @@ When a roadmap item is ready for implementation:
 4. Define acceptance criteria
 
 Or run `{AGENT_PREFIX}next-requirements {slug}` to generate requirements interactively.
-
-## Commands Available
-
-- `{AGENT_PREFIX}sync-todos` - Sync todos with architecture and code
-- `{AGENT_PREFIX}next-roadmap` - Groom and prioritize roadmap
-- `{AGENT_PREFIX}next-requirements {slug}` - Create requirements for an item
-- `{AGENT_PREFIX}prime-builder` - Switch to builder mode
 
 ---
 
