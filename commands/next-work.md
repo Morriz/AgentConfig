@@ -99,8 +99,13 @@ Think through:
 **When both agree**:
 1. Create folder: `todos/{slug}/`
 2. Write `todos/{slug}/requirements.md` with agreed content
-3. End Codex session
-4. Continue to Phase 3
+3. **Commit to git**:
+   ```bash
+   git add todos/{slug}/requirements.md
+   git commit -m "docs(requirements): add requirements for {slug}"
+   ```
+4. End Codex session
+5. Continue to Phase 3
 
 **IF EXISTS** → Continue to Phase 3
 
@@ -135,8 +140,13 @@ Let's break this into implementation tasks. Think through:
 
 **When both agree**:
 1. Write `todos/{slug}/implementation-plan.md` following the builder contract below
-2. End Codex session
-3. Continue to Phase 4
+2. **Commit to git**:
+   ```bash
+   git add todos/{slug}/implementation-plan.md
+   git commit -m "docs(planning): add implementation plan for {slug}"
+   ```
+3. End Codex session
+4. Continue to Phase 4
 
 ### Implementation Plan Structure (Builder Contract)
 
@@ -189,13 +199,29 @@ The implementation-plan.md MUST follow this structure so `next-build` can execut
 
 ## Phase 4: Build (Dispatch to Worker)
 
+**Pre-flight checks** - Verify context files are committed:
+
+```bash
+# Verify requirements and plan exist in git
+git ls-files --error-unmatch todos/{slug}/requirements.md todos/{slug}/implementation-plan.md
+
+IF exit code != 0:
+  → ERROR: Context files not committed to git
+  → Worker won't see them in worktree
+  → Go back and commit them, then retry Phase 4
+```
+
 **Check**: Does impl-plan have unchecked tasks in Groups 1-4?
 
-**IF YES** - Dispatch build:
+**IF YES** - Create worktree and dispatch build:
 
 First read `~/.agents/commands/next-build.md` to understand the worker's process. This enables you to take over manually if the worker fails or gets confused.
 
 ```bash
+# Create isolated worktree for this feature
+git worktree add trees/{slug}
+
+# Dispatch to worker IN the worktree
 build_session = teleclaude__run_agent_command(
   project={project_dir},
   agent="gemini",
