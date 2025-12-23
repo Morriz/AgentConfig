@@ -56,21 +56,7 @@ git push origin main
 
 ---
 
-## Step 6: Deploy
-
-Deploy to all computers:
-
-```bash
-teleclaude__deploy_to_all_computers()
-```
-
-Or use teleclaude__deploy_to_all_computers if available.
-
-Verify deployment succeeded on all machines.
-
----
-
-## Step 7: Archive Todo Folder
+## Step 6: Archive Todo Folder
 
 ```
 1. Determine next archive number:
@@ -87,7 +73,7 @@ Verify deployment succeeded on all machines.
 
 ---
 
-## Step 8: Log Delivery
+## Step 7: Log Delivery
 
 Append to `todos/delivered.md`:
 
@@ -106,7 +92,7 @@ Create file with header if it doesn't exist:
 
 ---
 
-## Step 9: Update Roadmap
+## Step 8: Update Roadmap
 
 ```
 1. Read todos/roadmap.md
@@ -117,7 +103,7 @@ Create file with header if it doesn't exist:
 
 ---
 
-## Step 10: Final Commit and Push
+## Step 9: Final Commit and Push
 
 ```bash
 git add -A
@@ -136,7 +122,7 @@ git push origin main
 
 ---
 
-## Step 11: Report Completion
+## Step 10: Report Completion
 
 ```
 ✅ Finalized: {slug}
@@ -162,14 +148,3 @@ Item complete. Ready for next work.
 - Document what failed
 - Do NOT proceed to later steps
 - Report to Master
-
----
-
-## What You Do NOT Do
-
-- ❌ Build code (that's `/next-build`)
-- ❌ Review code (that's `/next-review`)
-- ❌ Fix bugs (that's `/fix-bugs`)
-- ❌ Create requirements or plans (Master does that)
-
-You ONLY handle post-review finalization.

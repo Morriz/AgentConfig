@@ -47,7 +47,7 @@ When no pending items remain:
 2. **If still empty, spawn an Architect peer for brainstorming:**
 
 ```bash
-teleclaude__run_agent_command(message="{AGENT_PREFIX}prime-architect then brainstorm what's next", agent="gemini")
+teleclaude__run_agent_command(message="{AGENT_PREFIX}prime-architect", args="then brainstorm what's next", agent="gemini")
 ```
 
 Two Architects discuss together:
@@ -65,8 +65,6 @@ When a roadmap item is ready for implementation:
 2. Create `todos/{slug}/requirements.md` with clear specs
 3. Reference relevant architecture sections
 4. Define acceptance criteria
-
-Or run `{AGENT_PREFIX}next-requirements {slug}` to generate requirements interactively.
 
 ---
 

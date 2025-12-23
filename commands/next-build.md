@@ -104,18 +104,6 @@ Ready for review (Phase 5).
 
 ---
 
-## What You Do NOT Do
-
-- ❌ Merge to main (that's `/next-finalize`)
-- ❌ Deploy (that's `/next-finalize`)
-- ❌ Review code (that's `/next-review`)
-- ❌ Create requirements (Master does that)
-- ❌ Create implementation plan (Master does that)
-
-You ONLY execute Groups 1-4 of the implementation plan.
-
----
-
 ## Quick Reference
 
 ```
@@ -125,6 +113,3 @@ You ONLY execute Groups 1-4 of the implementation plan.
 4. Execute: code → test → checkbox → commit
 5. Report when Groups 1-4 complete
 ```
-
----
-ARGUMENTS GIVEN: "$ARGUMENTS"

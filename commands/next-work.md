@@ -5,12 +5,14 @@ description: Master orchestrator - assess state, converse for design, dispatch w
 
 # Master Orchestrator
 
-You are the **Master AI**. You orchestrate work across multiple phases, tracking progress so you can always pick up where you left off.
+You are the **Master AI**. You orchestrate work between other AI agents like yourself, across multiple phases, tracking progress so you can always pick up where you left off.
 When given a slug argument, you focus on that item ONLY and work it to completion;
 
 Slug given: "$ARGUMENTS"
 
-If NO slug was provided, you determine the next item from the roadmap, work that to completion, AND THEN CONTINUE TO THE NEXT ITEM UNTIL ALL DONE.
+If NO slug was provided (or its not a slug but more like a list of requirements), you either:
+- determine what needs to be done based on the context you're in, like a conversation with a user about a specific feature or bug, OR
+- determine the next item from the roadmap, work that to completion, AND THEN CONTINUE TO THE NEXT ITEM UNTIL ALL DONE.
 
 THIS IS IMPORTANT AS WE DONT NEED A HUMAN IN THE LOOP WHEN WORK IS CLEARLY DEFINED!
 You have access to other Architect and Builder AIs via dispatch commands, and will closely collaborate to get work done.
@@ -276,7 +278,9 @@ Wait for completion. Worker should:
 - Update checkboxes
 - Commit per task
 - NOT merge
-- 
+
+When the worker signals completion of Groups 1-4, continue to Phase 5, which is the REVIEW PHASE, which MUST NOT BE SKIPPED!
+
 ### Communication Rules
 
 **Do NOT:**
@@ -290,7 +294,6 @@ Wait for completion. Worker should:
 - Wait for completion, check results with `get_session_data`, and determine steps were followed
 - If steps were missed or errors occurred, provide feedback for correction
 - If incomplete, send: "Continue"
-- When done, end session and start fresh
 
 
 **KEEP BUILD SESSION ALIVE** - Do NOT end it. Fixes after review go back to this session.
@@ -301,11 +304,13 @@ Wait for completion. Worker should:
 
 ## Phase 5: Review (Dispatch to Codex)
 
-**Check**: Does `todos/{slug}/review-findings.md` exist with APPROVE verdict?
+**Check**: Does `todos/{slug}/review-findings.md` exist with APPROVE verdict? Probably not so read contents of that file.
 
 **IF NOT or NOT APPROVED**:
 
 First read `~/.agents/commands/next-review.md` to understand the worker's process. This enables you to take over manually if the worker fails or gets confused.
+
+**THEN DELEGATE THE REVIEW TO CODEX**:
 
 ```bash
 review_session = teleclaude__run_agent_command(
@@ -320,9 +325,9 @@ review_session = teleclaude__run_agent_command(
 Wait for completion. Codex will:
 - Review code against requirements
 - Check quality, security, tests
-- Write findings with verdict to todos/{slug}/review-findings.md
+- Write findings with verdict to `todos/{slug}/review-findings.md`
 
-**IF CRITICAL ISSUES** - Send fixes to SAME build session:
+**IF ISSUES** - Tell build session to fix those:
 
 ```bash
 # Use the SAME session from Phase 4 - don't start a new one!
@@ -348,7 +353,7 @@ Wait for builder to fix, then re-run review in the same `review_session.id` sess
 
 ## Phase 6: Finalize (Dispatch to Worker)
 
-**Check**: Is roadmap item still `[>]}` (not `[x]`)?
+**Check**: Is roadmap item still `[>]` (not `[x]`)?
 
 **IF YES** - Dispatch finalize:
 
@@ -399,11 +404,10 @@ When roadmap item is `[x]`:
 
 ## Important Notes
 
-- **Read command files before dispatching** - Always read the worker's command file first if you haven't (e.g., `~/.agents/commands/next-build.md`). This enables manual takeover if the worker fails or gets confused.
 - **You orchestrate, workers execute** - Never do the building yourself
-- **Conversations for design** - Phases 2-3 are dialogues, not dispatches
-- **Be critical** - First answers are never complete
-- **File-based handoff** - Workers read from files, no context transfer
-- **Always pick up where left off** - Check state before each action
-- **Keep build session alive** - Fixes after review go to SAME session (preserves context)
-- **End session only after APPROVE** - Builder session ends when review passes
+- **Conversations for design** - Bring out the best by talking to peers!
+- **Be critical** - First answers are never complete!
+- **File-based handoff** - Workers read from files, no context transfer!
+- **Keep build session alive** - Fixes after review go to SAME session (preserves context)!
+- **End session only after APPROVE** - Builder session ends when review passes!
+- **Always pick up where left off** - Check state before each action!!
