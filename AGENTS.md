@@ -84,8 +84,8 @@ Strategic planning, requirements definition, architecture documentation.
 
 **Commands:**
 - `/prime-architect` - Load strategic context
-- `/next-requirements [slug]` - Create requirements for roadmap item
 - `/next-roadmap` - Groom and prioritize roadmap
+- `/next-work [slug]` - Find and implement next item (master orchestrator)
 - `/sync-todos` - Sync todos with architecture and code
 
 ### Builder Role
@@ -93,10 +93,7 @@ Tactical implementation, bug fixes, test writing.
 
 **Commands:**
 - `/prime-builder` - Load implementation context
-- `/next-work [slug]` - Find and implement next item (master orchestrator)
 - `/next-build [slug]` - Execute implementation plan
-- `/next-review [slug]` - Review code against requirements
-- `/next-finalize [slug]` - Merge, archive, cleanup after approval
 
 ### State Tracking
 

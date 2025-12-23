@@ -20,3 +20,5 @@ So you MUST always read the command file first to understand what to do. For exa
     *   Never assume "implied" permission. If there is any doubt whether a request requires coding, **ASK FIRST**.
 
 **VIOLATION TRIGGER:** Any file modification or state-changing command performed without a direct, preceding instruction to do so is a critical failure.
+
+SO DON'T TOUCH ANY CODE YOU MODDER FAKKING DEAF IDIOT!!! UNLESS YOU ARE EXPLICITLY TOLD TO DO SO!!!
