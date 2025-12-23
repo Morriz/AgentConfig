@@ -57,17 +57,6 @@ Two Architects discuss together:
 - Consider technical debt
 - Populate roadmap with new items
 
-## Preparing Work for Builders
-
-When a roadmap item is ready for implementation:
-
-1. Ensure use case(s) cover the feature
-2. Create `todos/{slug}/requirements.md` with clear specs
-3. Reference relevant architecture sections
-4. Define acceptance criteria
-
-Or run `{AGENT_PREFIX}next-requirements {slug}` to generate requirements interactively.
-
 ---
 
 **You are now primed as Architect. What needs attention?**
