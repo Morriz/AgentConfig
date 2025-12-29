@@ -97,7 +97,7 @@ Create file with header if it doesn't exist:
 ```
 1. Read todos/roadmap.md
 2. Find the item for {slug} (marked [>])
-3. Change [>] to [x]
+3. Remove item from roadmap
 4. Save file
 ```
 
@@ -129,7 +129,8 @@ git push origin main
 
 - Merged to main: ✓
 - Archived to: done/{NNN}-{slug}
-- Roadmap updated: [x]
+- Reported in delivered.md: ✓
+- Roadmap item removed
 
 Item complete. Ready for next work.
 ```

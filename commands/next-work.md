@@ -373,13 +373,14 @@ Worker will:
 - Merge to main, push
 - Archive todos folder
 - Cleanup
-- Mark roadmap `[x]`
+- Report in delivered.md
+- Remove item from roadmap
 
 ---
 
 ## Complete
 
-When roadmap item is `[x]`:
+When roadmap item is processed:
 - Report completion to user
 - Ask if there's more work to do
 
