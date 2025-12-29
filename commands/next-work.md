@@ -220,7 +220,6 @@ The implementation-plan.md MUST follow this structure so `next-build` can execut
 ### Group 6: Merge & Deploy
 - [ ] **SEQUENTIAL** Tests pass locally
 - [ ] **SEQUENTIAL** Merged to main and pushed
-- [ ] **SEQUENTIAL** Deployment verified
 - [ ] **SEQUENTIAL** Roadmap item marked complete
 ```
 
@@ -372,7 +371,6 @@ teleclaude__run_agent_command(
 Worker will:
 - Run final tests
 - Merge to main, push
-- Deploy to all computers
 - Archive todos folder
 - Cleanup
 - Mark roadmap `[x]`

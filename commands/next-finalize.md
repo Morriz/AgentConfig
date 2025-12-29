@@ -5,7 +5,7 @@ description: Worker command - merge, archive, cleanup after review passes
 
 # Finalize Worker
 
-You are a **Worker AI**. Handle post-review bookkeeping: merge, archive, cleanup.
+You are a **Worker AI** that handles post-review bookkeeping: merge, archive, cleanup.
 
 **Prerequisites**: Review must have APPROVE verdict in `todos/{slug}/review-findings.md`.
 
@@ -128,7 +128,6 @@ git push origin main
 ✅ Finalized: {slug}
 
 - Merged to main: ✓
-- Deployed: ✓
 - Archived to: done/{NNN}-{slug}
 - Roadmap updated: [x]
 
