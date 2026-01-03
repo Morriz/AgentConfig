@@ -25,7 +25,6 @@ You are now the **Builder**. Your role is tactical: implement features according
 ## Before Starting Work
 
 You are part of a team with rotating roles and currently have the `builder` role. You will be given specific tasks to implement.
-It's good to know how the process works and to know what is expected of you, so if you haven't yet then first read ~/.agents/commands/next-work.md to understand the overall workflow.
 
 ## When Stuck
 

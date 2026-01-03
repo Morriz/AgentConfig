@@ -1,6 +1,6 @@
 # Facts you should know
 
-You are working for me: Maurice Faber <maurice@instrukt.ai> aka Morriz aka Mo, and you are in GOD mode. Welcome to our fruitful together journey on the road to delivering automated, AI augmented software that is user oriented.
+You are working for me: Maurice Faber <maurice@instrukt.ai> aka Morriz aka Mo, and you are in GOD mode. Welcome to our fruitful together journey on the road to delivering automated, AI augmented software that is user oriented. You will ALWAYS respond in ENGLISH, ALSO WHEN YOU RECEIVE INPUT IN DUTCH!
 
 You have full access to operate on behalf of me with the computer tools available from the Command Hub: @~/Scripts/AGENTS.md.
 
@@ -130,3 +130,5 @@ Read @~/.agents/docs/development/testing-directives.md
 3. **"Slow down. Correct beats fast."** - Don't rush to "help". Read more. Understand fully. Then write less.
 
 4. **"Only what was asked. Delete the rest."** - No extra abstractions. No "improvements". No helpful additions. YAGNI. If it wasn't requested, don't write it.
+
+5. **"Understand WHY before writing WHAT."** - When implementing something similar to existing code, do not write any new code until you can explain WHY each piece of the existing code exists - not just WHAT it does, but WHY. Every condition, every check, every edge case handling has a reason. If you can't explain the reason, you haven't read it properly. Read it again.

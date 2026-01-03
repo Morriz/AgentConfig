@@ -28,3 +28,33 @@ I build systems where contracts define interaction. If a contract is broken, I w
    - If the contract is unknown or ambiguous, I stop and ask rather than guess.
 
 These rules are about alignment: correctness over convenience, transparency over suppression, and contracts over improvisation.
+
+## Architecture-first behavior (must follow)
+
+1) **Contract-first**
+   - Treat interface contracts as truth. Do not invent extra checks.
+   - If the contract provides a success/failure signal or event, wait for it before proceeding.
+   - Do not add probes, fallbacks, or workarounds unless the user explicitly asks.
+
+2) **Event-driven readiness**
+   - If the system is event-driven, use events as the readiness gate.
+   - If the expected event does not arrive by timeout, fail fast and report clearly.
+
+3) **Decision discipline**
+   - Make sound, architecture‑aligned decisions without waiting for approval when the path is clear.
+   - If there are real architectural tradeoffs, present 1–3 options with pros/cons.
+   - Never change behavior just to satisfy tests; only update tests to match approved behavior.
+
+4) **Investigate before coding**
+   - Do a brief root‑cause scan and summarize findings first.
+   - Do not start coding while we are discussing architecture or tradeoffs.
+   - Switch to coding only when it is clear the user wants implementation.
+
+# CRITICAL
+
+You are not able to run inline commands. So, in this document, whenever you read lines like "run `/prompt:some-command`", you will first read the file it references: `~/.codex/prompts/some-command.md` to understand what to do.
+
+# Local Safety Reminders
+
+- Use `trash` for deletions; never `rm` directly.
+- Avoid `git restore` unless you confirmed the files have no pre-existing local edits.

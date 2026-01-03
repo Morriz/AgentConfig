@@ -33,11 +33,14 @@ Or equivalent test command. All tests must pass before proceeding.
 
 ---
 
-## Step 4: Merge to Main
+## Step 4: Merge to Main (Fresh Main Required)
+
+Use fast-forward only to keep local commits intact; do not overwrite local main.
 
 ```bash
+git fetch origin main
 git checkout main
-git pull origin main
+git pull --ff-only origin main
 git merge {slug} --no-edit
 ```
 
@@ -122,7 +125,19 @@ git push origin main
 
 ---
 
-## Step 10: Report Completion
+## Step 10: Remove Worktree (Last)
+
+If a worktree exists for this slug, remove it as the final cleanup step.
+
+```
+1. Check if trees/{slug} exists
+2. If it exists, follow ~/.agents/commands/remove-worktree.md for safe removal
+3. If it does not exist, continue
+```
+
+---
+
+## Step 11: Report Completion
 
 ```
 ✅ Finalized: {slug}
