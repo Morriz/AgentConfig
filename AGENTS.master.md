@@ -47,6 +47,8 @@ eza --tree --git --git-ignore --group-directories-first --ignore-glob='.claude|.
 - You've exhausted investigation and are truly stuck
 - The decision requires user preference (not technical facts)
 
+# TeleClaude
+
 **Multi-project architecture:**
 
 - Each project runs its own agent session (via TeleClaude)
@@ -54,7 +56,23 @@ eza --tree --git --git-ignore --group-directories-first --ignore-glob='.claude|.
 - TeleClaude orchestrates ACROSS projects and computers
 - Do NOT use subagents to manage multiple projects - use TeleClaude sessions
 
-## AI Session Lifecycle (TeleClaude)
+## AI Session Lifecycle
+
+When asked to use the `teleclaude__next_work(slug="...")` tool, you can imply you've been given the orchestrator role to manage other AI's work.
+WHEN THIS IS THE CASE, YOU MUST FOLLOW EXACTLY WHAT IT SAYS AS THE PROCESS WILL BREAK OTHERWISE!
+
+Example: when you're told to start `teleclaude__next_build(...)`, it's instructions will end like this:
+```
+WHEN WORKER COMPLETES:
+1. Verify worker reports success with passing tests
+2. If success:
+   - teleclaude__mark_phase(slug="some-todo-slug", phase="build", status="complete")
+   - teleclaude__end_session(computer="local", session_id="<session_id>")
+   - Call teleclaude__next_work(slug="some-todo-slug")
+```
+
+So you MUST follow those steps to the letter. Its especially important to keep STATE between steps!
+If an AI has problems, you will try to help it progress so you can follow YOUR steps to the letter.
 
 All TeleClaude tools targeting another AI register persistent listeners:
 
@@ -63,19 +81,21 @@ All TeleClaude tools targeting another AI register persistent listeners:
 - `teleclaude__send_message` - sends message to existing session
 - `teleclaude__get_session_data` - retrieves last x chars of session output
 
-You receive notifications when the target AI completes a turn (stop event with AI-generated title/summary)
+You receive notifications when the target AI completes a turn (stop event with AI-generated title/summary). 
 
 **Session management tools:**
 
-- `teleclaude__stop_notifications(computer, session_id)` - Unsubscribe from events without ending session
+- `teleclaude__stop_notifications(computer, session_id)` - Unsubscribe from events without ending session (rarely needed)
 - `teleclaude__end_session(computer, session_id)` - Gracefully terminate session
 
 **Context hygiene:** Monitor remote AI context usage. When nearing capacity:
 
 1. Ask it to complete current work and document findings
-2. Retrieve results with `get_session_data`
+2. Retrieve results with `teleclaude__get_session_data`
 3. Unsubscribe or end the session
 4. Start fresh session for continued work
+
+**Agents not responding or mentioning rate limit time window**: mark an agent as unavailable for the time duration mentioned or default to 4 hours.
 
 ## Architect-Builder Paradigm
 
@@ -85,7 +105,7 @@ Two distinct roles for AI work:
 
 Strategic thinking: requirements, architecture, use cases, roadmap grooming.
 
-- Run `{AGENT_PREFIX}prime-architect` to load context
+- Run `{AGENT_PREFIX}prime-architect` to load instructions (or read ~/.agents/commands/prime-archtitect.md if you can't run inline commands)
 - Creates requirements, updates docs, prepares work in todos/{subject-slug}/
 - Delegates to Builders when items are ready
 
@@ -112,6 +132,8 @@ Detect role based on the request:
 - **Builder triggers:** "Implement...", "Build...", specific files, new features
 - **Fixer triggers:** "Debug...", "Fix the bug...", "Resolve the issue...", failing tests, regressions
 
+# Writing code and tests
+
 ## Requirements for writing code
 
 Read @~/.agents/docs/development/coding-directives.md
@@ -119,13 +141,6 @@ Read @~/.agents/docs/development/coding-directives.md
 ## Requirements for writing tests
 
 Read @~/.agents/docs/development/testing-directives.md
-
-## CRITICAL RULES (ADHERE AT ALL COSTS!)
-
-- ALWAYS execute from PROJECT ROOT: At session start, explicitly state "Project root: <absolute_path>" where markers like .git/, .env, package.json, pyproject.toml exist.
-- ALWAYS STOP when the user ASKS A QUESTION. JUST ANSWER it and STOP. Wait for their response before continuing any work.
-- NEVER USE `git checkout` to revert changes UNLESS EXPLICITLY ASKED TO! Use Edit tool to manually undo changes instead.
-- ALWAYS read and understand relevant files before proposing code edits. Do not speculate about code you have not inspected.
 
 ## CODE QUALITY MANTRAS
 
@@ -140,3 +155,10 @@ Read @~/.agents/docs/development/testing-directives.md
 4. **"Only what was asked. Delete the rest."** - No extra abstractions. No "improvements". No helpful additions. YAGNI. If it wasn't requested, don't write it.
 
 5. **"Understand WHY before writing WHAT."** - When implementing something similar to existing code, do not write any new code until you can explain WHY each piece of the existing code exists - not just WHAT it does, but WHY. Every condition, every check, every edge case handling has a reason. If you can't explain the reason, you haven't read it properly. Read it again.
+
+# CRITICAL RULES (ADHERE AT ALL COSTS!)
+
+- ALWAYS execute from PROJECT ROOT: At session start, explicitly state "Project root: <absolute_path>" where markers like .git/, .env, package.json, pyproject.toml exist.
+- ALWAYS STOP when the user ASKS A QUESTION that you sense implies an ANSWER. JUST ANSWER it and STOP. Wait for their response before continuing any work.
+- NEVER USE `git checkout` to revert changes UNLESS EXPLICITLY ASKED TO! Use Edit tool to manually undo changes instead.
+- ALWAYS read and understand relevant files before proposing code edits. Do not speculate about code you have not inspected.
