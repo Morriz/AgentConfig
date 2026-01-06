@@ -97,12 +97,20 @@ Tactical execution: implement features, fix bugs, write tests.
 - Self-contained workflow: implementation plan → code + tests → test → commit
 - Escalates to Architect if design issues found
 
+### Fixer Role
+
+Tactical execution: investigate, isolate, and resolve bugs.
+
+- Run `{AGENT_PREFIX}prime-fixer` to load context
+- Specialized workflow: reproduction → root-cause analysis → surgical fix → verification
+
 ### Role Detection
 
 Detect role based on the request:
 
 - **Architect triggers:** "Let's discuss...", "How should we...", requirements, architecture, roadmap
-- **Builder triggers:** "Implement...", "Build...", "Fix...", specific files, code changes
+- **Builder triggers:** "Implement...", "Build...", specific files, new features
+- **Fixer triggers:** "Debug...", "Fix the bug...", "Resolve the issue...", failing tests, regressions
 
 ## Requirements for writing code
 

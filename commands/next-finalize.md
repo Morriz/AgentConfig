@@ -137,6 +137,37 @@ If a worktree exists for this slug, remove it as the final cleanup step.
 
 ---
 
+## Step 10.1: Stop Worktree-Only Dev Processes (Before Removing Worktree)
+
+If the worker started any local dev processes, stop **only** those running from the worktree path
+to avoid killing main/shared services.
+
+Use the worktree path filter:
+
+```
+WORKTREE_PATH="$PWD/trees/{slug}"
+
+# Backend dev daemon (python -m crypto_ai.daemon)
+for pid in $(ps -ax -o pid=,command= | awk '/crypto_ai\\.daemon/ {print $1}'); do
+  cwd=$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')
+  if [[ "$cwd" == "$WORKTREE_PATH"* ]]; then
+    kill "$pid"
+  fi
+done
+
+# Frontend dev server (pnpm dev / vite)
+for pid in $(ps -ax -o pid=,command= | awk '/(pnpm dev|vite)/ {print $1}'); do
+  cwd=$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')
+  if [[ "$cwd" == "$WORKTREE_PATH"* ]]; then
+    kill "$pid"
+  fi
+done
+```
+
+If `lsof` is unavailable, **do not kill** any processes.
+
+---
+
 ## Step 11: Report Completion
 
 ```

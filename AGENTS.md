@@ -95,6 +95,13 @@ Tactical implementation, bug fixes, test writing.
 - `/prime-builder` - Load implementation context
 - `/next-build [slug]` - Execute implementation plan
 
+### Fixer Role
+Tactical execution: investigate, isolate, and resolve bugs.
+
+**Commands:**
+- `/prime-fixer` - Load debugging and fixing context
+- `/next-bugs` - Execute bug fixing plan
+
 ### State Tracking
 
 Work progress is tracked through file existence and content in `todos/` directory:

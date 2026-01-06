@@ -35,9 +35,16 @@ Slug given: "$ARGUMENTS"
 
 ```bash
 git status
-git diff main..HEAD --name-only
-git diff main..HEAD
+git log --oneline HEAD..main
+git log --oneline main..HEAD
+git diff $(git merge-base HEAD main)..HEAD --name-only
+git diff $(git merge-base HEAD main)..HEAD
 ```
+
+**Why merge-base?** `main` is the shared local branch ref (even in worktrees). If `main` has new commits that your
+worktree branch has not merged, `git diff main..HEAD` will treat those new `main` changes as regressions. Using the
+merge-base limits the diff to what changed on the branch since it diverged from `main`. The log commands above make
+that divergence explicit.
 
 ---
 
