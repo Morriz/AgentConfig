@@ -3,9 +3,9 @@ argument-hint: '[slug]'
 description: Worker command - fix issues identified in code review findings
 ---
 
-# Review Fix Worker
+# Fix Review Issues
 
-You are a **Worker AI**. Fix all issues identified in the code review.
+Read `~/.agents/commands/prime-builder.md` first if you haven't already.
 
 Slug given: "$ARGUMENTS"
 
@@ -137,10 +137,7 @@ The Master will dispatch `/next-review` again to verify fixes.
 
 ---
 
-## What You Do NOT Do
+## Important
 
-- ❌ Change the review verdict (reviewer does that)
-- ❌ Skip Critical issues
-- ❌ Refactor unrelated code
-- ❌ Add features while fixing issues
-- ❌ Push to remote (Master handles merging)
+- Do NOT change the review verdict (reviewer does that)
+- Do NOT push to remote (orchestrator handles merging)

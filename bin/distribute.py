@@ -19,10 +19,12 @@ class AgentConfig(TypedDict):
     prefix: str
     master_dest: str
     commands_dest_dir: str
+    agents_dest_dir: str
     ext: str
     transform: Transform
     deploy_master_dest: NotRequired[str]
     deploy_commands_dest: NotRequired[str]
+    deploy_agents_dest: NotRequired[str]
 
 
 def transform_to_codex(post: Post) -> str:
@@ -54,6 +56,39 @@ def transform_to_gemini(post: Post) -> str:
     return f'description = {description_str}\nprompt = """\n{content}\n"""\n'
 
 
+def transform_agent_to_claude(post: Post, trigger: str) -> str:
+    """Transform a sub-agent post to Claude format."""
+    metadata = dict(post.metadata)
+    metadata["name"] = trigger
+    transformed_post = Post(post.content, **metadata)
+    return frontmatter.dumps(transformed_post)
+
+
+def transform_agent_to_codex(post: Post, trigger: str) -> str:
+    """Transform a sub-agent post to Codex format."""
+    lines = ["---"]
+    description = post.metadata.get("description", "")
+    lines.append(f'description: """{description}"""')
+    lines.append(f'trigger: "{trigger}"')
+    lines.append("---")
+    lines.append("")
+    lines.append(post.content)
+    return "\n".join(lines)
+
+
+def transform_agent_to_gemini(post: Post, trigger: str) -> str:
+    """Transform a sub-agent post to Gemini TOML format."""
+    description = post.metadata.get("description", "")
+    description_str = f'"""{description}"""'
+    content = post.content
+    return f'description = {description_str}\ntrigger = "{trigger}"\nprompt = """\n{content}\n"""\n'
+
+
+def resolve_subagent_name(post: Post, filename: str) -> str:
+    """Resolve the sub-agent trigger name from metadata or filename."""
+    return cast(str, post.metadata.get("name") or os.path.splitext(filename)[0])
+
+
 def process_file(content: str, agent_prefix: str) -> str:
     """Apply substitutions to the file content."""
     content = content.replace("{AGENT_PREFIX}", agent_prefix)
@@ -83,6 +118,7 @@ def main() -> None:
 
     master_agents_file = "AGENTS.master.md"
     master_commands_dir = "commands"
+    master_subagents_dir = "agents"
 
     agents_config: dict[str, AgentConfig] = {
         "claude": {
@@ -90,8 +126,10 @@ def main() -> None:
             "prefix": "/",
             "master_dest": os.path.join(dist_dir, "claude", "CLAUDE.md"),
             "commands_dest_dir": os.path.join(dist_dir, "claude", "commands"),
+            "agents_dest_dir": os.path.join(dist_dir, "claude", "agents"),
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.claude"), "CLAUDE.md"),
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.claude"), "commands"),
+            "deploy_agents_dest": os.path.join(os.path.expanduser("~/.claude"), "agents"),
             "ext": ".md",
             "transform": lambda p: frontmatter.dumps(p),
         },
@@ -100,8 +138,10 @@ def main() -> None:
             "prefix": "~/.codex/prompts/",
             "master_dest": os.path.join(dist_dir, "codex", "CODEX.md"),
             "commands_dest_dir": os.path.join(dist_dir, "codex", "prompts"),
+            "agents_dest_dir": os.path.join(dist_dir, "codex", "agents"),
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.codex"), "CODEX.md"),
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.codex"), "prompts"),
+            "deploy_agents_dest": os.path.join(os.path.expanduser("~/.codex"), "agents"),
             "ext": ".md",
             "transform": transform_to_codex,
         },
@@ -110,8 +150,10 @@ def main() -> None:
             "prefix": "/",
             "master_dest": os.path.join(dist_dir, "gemini", "GEMINI.md"),
             "commands_dest_dir": os.path.join(dist_dir, "gemini", "commands"),
+            "agents_dest_dir": os.path.join(dist_dir, "gemini", "agents"),
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.gemini"), "GEMINI.md"),
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.gemini"), "commands"),
+            "deploy_agents_dest": os.path.join(os.path.expanduser("~/.gemini"), "agents"),
             "ext": ".toml",
             "transform": transform_to_gemini,
         },
@@ -124,11 +166,15 @@ def main() -> None:
     if not os.path.exists(master_commands_dir):
         print(f"Error: Master commands directory not found at {master_commands_dir}")
         return
+    if not os.path.exists(master_subagents_dir):
+        print(f"Error: Master sub-agents directory not found at {master_subagents_dir}")
+        return
 
     with open(master_agents_file, "r") as f:
         master_agents_content = f.read()
 
     command_files = [f for f in os.listdir(master_commands_dir) if f.endswith(".md")]
+    subagent_files = [f for f in os.listdir(master_subagents_dir) if f.endswith(".md")]
 
     for agent_name, config in agents_config.items():
         if agent_name != "agents" and not os.path.isdir(config["check_dir"]):
@@ -149,6 +195,7 @@ def main() -> None:
         if master_dest_dir:
             os.makedirs(master_dest_dir, exist_ok=True)
         os.makedirs(commands_dest_path, exist_ok=True)
+        os.makedirs(config["agents_dest_dir"], exist_ok=True)
 
         # Process AGENTS.master.md
         agent_specific_file = f"PREFIX.{agent_name}.md"
@@ -185,6 +232,34 @@ def main() -> None:
                         out_f.write(transformed_content + "\n")
                 except Exception as e:
                     print(f"Error processing file {command_file} for agent {agent_name}: {e}")
+
+        # Process agents/*.md
+        for subagent_file in subagent_files:
+            with open(os.path.join(master_subagents_dir, subagent_file), "r") as f:
+                try:
+                    post = frontmatter.load(f)
+                    post.content = process_file(post.content, config["prefix"])
+
+                    trigger_name = resolve_subagent_name(post, subagent_file)
+
+                    if agent_name == "claude":
+                        transformed_content = transform_agent_to_claude(post, trigger_name)
+                    elif agent_name == "codex":
+                        transformed_content = transform_agent_to_codex(post, trigger_name)
+                    else:
+                        transformed_content = transform_agent_to_gemini(post, trigger_name)
+
+                    output_filename = f"{trigger_name}{config['ext']}"
+
+                    with open(
+                        os.path.join(config["agents_dest_dir"], output_filename),
+                        "w",
+                    ) as out_f:
+                        out_f.write(transformed_content + "\n")
+                except Exception as e:
+                    print(
+                        f"Error processing sub-agent file {subagent_file} for agent {agent_name}: {e}"
+                    )
 
     print("\nTranspilation complete.")
 

@@ -16,7 +16,7 @@ Slug given: "$ARGUMENTS"
 ## Step 2: Verify Prerequisites
 
 ```
-1. Read todos/{slug}/review-findings.md
+1. Read trees/{slug}/todos/{slug}/review-findings.md
 2. Verify verdict is APPROVE
 3. If not APPROVE, STOP and report: "Review not approved. Cannot finalize."
 ```

@@ -3,13 +3,11 @@ argument-hint: '[slug]'
 description: Worker command - execute implementation plan, update checkboxes, commit per task
 ---
 
-# Builder Worker
+# Build
 
-You are a **Worker AI**. Execute the implementation plan precisely. You have no prior context - everything you need is in files.
+Read `~/.agents/commands/prime-builder.md` first if you haven't already.
 
 Slug given: "$ARGUMENTS"
-
-Now read ~/.agents/commands/prime-builder.md for detailed instructions on your role and tasks.
 
 ---
 

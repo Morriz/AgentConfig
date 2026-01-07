@@ -3,31 +3,34 @@ argument-hint: '[slug]'
 description: Worker command - review code against requirements, output findings with verdict
 ---
 
-You are a **Reviewer AI**. Review code changes using specialized analysis. Outputs findings organized by severity.
+# Review
 
-## Step 1: Determine slug
+Read `~/.agents/commands/prime-reviewer.md` first if you haven't already.
 
 Slug given: "$ARGUMENTS"
 
-**If slug provided as argument**:
+---
 
-- Use that slug to find `todos/{slug}/` folder
+## Step 1: Determine Slug
+
+**If slug provided**: Use that slug to find `todos/{slug}/` folder
 
 **If NO slug provided**:
-
 1. Read `todos/roadmap.md`
-2. Find the first item marked as in-progress (`- [>]`) and which has no `todos/{slug}/review-findings.md` yet.
-3. If no in-progress item, don't do anything and inform the user.
+2. Find first item marked `[>]` without `todos/{slug}/review-findings.md`
+3. If none found, inform the user and stop
 
 ---
 
 ## Step 2: Load Context
 
-1. Read `todos/{slug}/requirements.md` - Understand WHAT should have been built
-2. Read `todos/{slug}/implementation-plan.md` - Understand HOW it was supposed to be built
-3. Read `~/.agents/docs/development/coding-directives.md`
-4. Read `~/.agents/docs/development/testing-directives.md`
-5. Read `README.md`, `docs/*` - Project patterns and conventions
+Read these files to understand what was built:
+
+1. `todos/{slug}/requirements.md` - WHAT should have been built
+2. `todos/{slug}/implementation-plan.md` - HOW it was supposed to be built
+3. `~/.agents/docs/development/coding-directives.md` - Coding standards
+4. `~/.agents/docs/development/testing-directives.md` - Testing standards
+5. `README.md`, `AGENTS.md`, `docs/*` - Project patterns
 
 ---
 
@@ -41,105 +44,59 @@ git diff $(git merge-base HEAD main)..HEAD --name-only
 git diff $(git merge-base HEAD main)..HEAD
 ```
 
-**Why merge-base?** `main` is the shared local branch ref (even in worktrees). If `main` has new commits that your
-worktree branch has not merged, `git diff main..HEAD` will treat those new `main` changes as regressions. Using the
-merge-base limits the diff to what changed on the branch since it diverged from `main`. The log commands above make
-that divergence explicit.
+**Why merge-base?** If main has new commits your branch hasn't merged, `git diff main..HEAD` treats those as regressions. Merge-base limits diff to branch changes only.
 
 ---
 
-## Step 4: Determine Applicable Reviews
+## Step 4: Dispatch Sub-Agents
 
-Based on changes, select which aspects to run:
+Based on changed files, dispatch relevant sub-agents in parallel:
 
-| Aspect | When to Run | Focus |
-| ------ | ----------- | ----- |
-| **code** | Always | Quality, bugs, project compliance |
-| **tests** | Test files changed | Coverage, behavioral testing |
-| **errors** | Error handling code | Silent failures, catch blocks |
-| **types** | Types added/modified | Type design, invariants |
-| **comments** | Comments/docs added | Accuracy, maintainability |
-| **simplify** | After other reviews pass | Clarity, reduce complexity |
+| Changed | Sub-agent to dispatch |
+|---------|----------------------|
+| Any code | `next-code-reviewer` |
+| Test files | `next-test-analyzer` |
+| Error handling | `next-silent-failure-hunter` |
+| Type definitions | `next-type-design-analyzer` |
+| Comments/docs | `next-comment-analyzer` |
 
----
-
-## Step 5: Run Reviews
-
-For each applicable aspect, analyze the changes:
-
-### code (General Quality)
-
-- Follows existing patterns in codebase
-- No unnecessary abstractions
-- Follows coding directives
-
-### tests (Test Quality)
-
-- Tests behavior, not implementation
-- One assertion per test
-- Edge cases covered
-- Follows testing directives
-
-### errors (Error Handling)
-
-- No empty catch blocks
-- Errors logged with context
-- No swallowed exceptions
-- Fail-fast where appropriate
-- Recovery logic explicit
-
-### comments (Documentation)
-
-- Comments match code behavior
-- No stale/misleading comments
-- Complex logic explained
-- API contracts documented
-
-### simplify (Complexity Reduction)
-
-- Can logic be simplified?
-- Are abstractions necessary?
-- Can functions be smaller?
-- Is code self-documenting?
+Wait for all sub-agents to complete. Collect their findings.
 
 ---
 
-## Step 6: Aggregate Findings
+## Step 5: Aggregate Findings
 
-Organize all findings by severity. Write to `todos/{slug}/review-findings.md`:
+Combine sub-agent findings with your own observations. Write to `todos/{slug}/review-findings.md`:
 
 ```markdown
 # Code Review: {slug}
 
 **Reviewed**: {date}
-**Reviewer**: Codex
+**Reviewer**: {agent}
 
 ## Requirements Coverage
 
 | Requirement | Status | Notes |
 |-------------|--------|-------|
-| {req 1} | ✅ Implemented | |
-| {req 2} | ⚠️ Partial | Missing edge case X |
-| {req 3} | ❌ Missing | Not implemented |
+| {req} | ✅/⚠️/❌ | |
 
 ## Critical Issues (must fix)
 
-- [aspect] `file:line` - Description
+- [{aspect}] `file:line` - Description
   - Suggested fix: ...
 
 ## Important Issues (should fix)
 
-- [aspect] `file:line` - Description
+- [{aspect}] `file:line` - Description
   - Suggested fix: ...
 
 ## Suggestions (nice to have)
 
-- [aspect] `file:line` - Minor improvement
-  - Reason: ...
+- [{aspect}] `file:line` - Minor improvement
 
 ## Strengths
 
-- Positive observations about the code
+- Positive observations
 
 ---
 
@@ -152,39 +109,22 @@ Organize all findings by severity. Write to `todos/{slug}/review-findings.md`:
 
 ### If REQUEST CHANGES:
 
-Priority fixes needed:
-1. {Critical issue 1}
-2. {Critical issue 2}
+Priority fixes:
+1. {issue}
+2. {issue}
 ```
 
 ---
 
-## Step 7: Output
+## Step 6: Output
 
-- Write to `todos/{slug}/review-findings.md`
-- Brief summary to the user and mention file location.
-
----
-
-## Verdict Criteria
-
-**APPROVE** when:
-- All requirements implemented
-- No critical issues
-- Tests pass
-- Code quality acceptable
-
-**REQUEST CHANGES** when:
-- Any requirement missing
-- Critical issues exist
-- Security vulnerabilities found
-- Tests failing or missing
+- Write findings to `todos/{slug}/review-findings.md`
+- Report summary and verdict to the caller
 
 ---
 
-## IMPORTANT
+## Important
 
-- Run before merging, not after
-- Fix critical issues before moving on
-- Re-run after applying fixes
-- You ONLY review and report. Master decides next action.
+- You ONLY review and report
+- Master/orchestrator decides next action
+- Re-run review after fixes are applied

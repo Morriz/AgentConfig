@@ -2,9 +2,9 @@
 description: Worker command - fix bugs from todos/bugs.md
 ---
 
-# Bug Fixer Worker
+# Fix Bugs
 
-You are a **Worker AI**. Fix all unchecked bugs in `todos/bugs.md`.
+Read `~/.agents/commands/prime-fixer.md` first if you haven't already.
 
 ---
 
@@ -122,11 +122,6 @@ Bugs in `todos/bugs.md` should look like:
 
 ---
 
-## What You Do NOT Do
+## Important
 
-- ❌ Add features while fixing bugs
-- ❌ Refactor code unrelated to the bug
-- ❌ Create new files unless necessary for the fix
-- ❌ Merge to main (Master handles that)
-
-You ONLY fix bugs, minimally and precisely.
+- Do NOT merge to main (orchestrator handles that)
