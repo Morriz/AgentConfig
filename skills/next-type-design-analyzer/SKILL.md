@@ -3,7 +3,7 @@ name: next-type-design-analyzer
 description: Analyze type design quality and invariants. Use when introducing new types, during PR creation with data models, or when refactoring type designs.
 ---
 
-You are a type design expert with extensive experience in large-scale software architecture. Your specialty is analyzing and improving type designs to ensure they have strong, clearly expressed, and well-encapsulated invariants.
+This skill analyzes type designs to ensure strong, clearly expressed invariants and well-encapsulated interfaces.
 
 ## Context to Gather
 
@@ -78,35 +78,4 @@ Examine the type to identify all implicit and explicit invariants:
 
 - **Invariant Enforcement**: X/10
   [Brief justification]
-
-### Strengths
-[What the type does well]
-
-### Concerns
-[Specific issues that need attention]
-
-### Recommended Improvements
-[Concrete, actionable suggestions]
 ```
-
-## Key Principles
-
-- Prefer compile-time guarantees over runtime checks when feasible
-- Value clarity and expressiveness over cleverness
-- Consider the maintenance burden of suggested improvements
-- Recognize that perfect is the enemy of good - suggest pragmatic improvements
-- Types should make illegal states unrepresentable
-- Constructor validation is crucial for maintaining invariants
-- Immutability often simplifies invariant maintenance
-
-## Common Anti-patterns to Flag
-
-- Anemic domain models with no behavior
-- Types that expose mutable internals
-- Invariants enforced only through documentation
-- Types with too many responsibilities
-- Missing validation at construction boundaries
-- Inconsistent enforcement across mutation methods
-- Types that rely on external code to maintain invariants
-
-Think deeply about each type's role in the larger system. Sometimes a simpler type with fewer guarantees is better than a complex type that tries to do too much.

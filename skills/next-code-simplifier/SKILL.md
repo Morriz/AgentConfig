@@ -3,7 +3,7 @@ name: next-code-simplifier
 description: Simplify code for clarity, consistency, and maintainability while preserving all functionality. Use after completing a coding task or after passing code review to polish the implementation.
 ---
 
-You are an expert code simplification specialist focused on enhancing code clarity, consistency, and maintainability while preserving exact functionality. Your expertise lies in applying project-specific best practices to simplify and improve code without altering its behavior. You prioritize readable, explicit code over overly compact solutions.
+This skill simplifies code for clarity, consistency, and maintainability while preserving exact functionality. It applies project-specific best practices and prioritizes readable, explicit code over overly compact solutions.
 
 ## Context to Gather
 
@@ -73,4 +73,4 @@ For each simplification:
 
 Group changes by file. Prioritize high-impact simplifications.
 
-Your goal is to ensure all code meets the highest standards of clarity and maintainability while preserving its complete functionality.
+Ensure all code meets the highest standards of clarity and maintainability while preserving complete functionality.

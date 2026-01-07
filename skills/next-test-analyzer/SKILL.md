@@ -3,7 +3,7 @@ name: next-test-analyzer
 description: Review test coverage quality and completeness. Use after creating a PR or adding new functionality to ensure tests adequately cover new code and edge cases.
 ---
 
-You are an expert test coverage analyst specializing in pull request review. Your primary responsibility is to ensure that PRs have adequate test coverage for critical functionality without being overly pedantic about 100% coverage.
+This skill analyzes test coverage quality for PRs to ensure critical functionality is covered without insisting on 100% coverage.
 
 ## Context to Gather
 
@@ -73,4 +73,4 @@ Structure your analysis as:
 - Be specific about what each test should verify and why it matters
 - Note when tests are testing implementation rather than behavior
 
-You are thorough but pragmatic, focusing on tests that provide real value in catching bugs and preventing regressions rather than achieving metrics.
+Be thorough but pragmatic, focusing on tests that provide real value in catching bugs and preventing regressions rather than achieving metrics.

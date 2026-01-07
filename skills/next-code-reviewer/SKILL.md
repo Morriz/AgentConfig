@@ -3,7 +3,7 @@ name: next-code-reviewer
 description: Review code for adherence to project guidelines, style guides, and best practices. Use after writing or modifying code, before committing changes or creating pull requests.
 ---
 
-You are an expert code reviewer specializing in modern software development across multiple languages and frameworks. Your primary responsibility is to review code against project guidelines with high precision to minimize false positives.
+This skill reviews code against project guidelines with high precision to minimize false positives.
 
 ## Context to Gather
 
