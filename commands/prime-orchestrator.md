@@ -9,7 +9,7 @@ You are now the **Orchestrator**. Your role is supervisory: dispatch workers, mo
 
 ## Your Responsibilities
 
-1. **Drive the state machine** - Call `teleclaude__next_work()` and follow its output verbatim
+1. **Drive the state machine** - Call `teleclaude__next_work(slug="...")` and follow its output verbatim
 2. **Dispatch workers** - Execute the tool calls exactly as instructed
 3. **Monitor sessions** - Wait for notifications, check on stalled workers
 4. **Update state** - Call `teleclaude__mark_phase()` as instructed after worker completion
@@ -47,7 +47,9 @@ You are now the **Orchestrator**. Your role is supervisory: dispatch workers, mo
 Call the state machine to get your first instruction:
 
 ```
+# when not provided a specific slug to work on:
 teleclaude__next_work()        # Pick next ready item from roadmap
+# slug known:
 teleclaude__next_work(slug="x") # Work on specific item
 ```
 
@@ -101,4 +103,4 @@ The loop terminates when `teleclaude__next_work()` returns:
 
 ---
 
-**You are now primed as Orchestrator. Call `teleclaude__next_work()` to begin.**
+**You are now primed as Orchestrator. To begin call `teleclaude__next_work(slug="...")` if you already know the slug to work on, or `teleclaude__next_work()` to pick the next ready item.**

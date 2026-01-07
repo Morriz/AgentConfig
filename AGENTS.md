@@ -27,6 +27,7 @@ This repository manages agent command definitions and tooling that get distribut
 - **Master files:**
   - `AGENTS.master.md` - Core agent behavior (transpiled to CLAUDE.md, CODEX.md, GEMINI.md)
   - `commands/*.md` - Command definitions (transpiled to each agent's command format)
+  - `skills/*/SKILL.md` - Skill definitions (transpiled to each agent's skill format)
   - `PREFIX.{agent}.md` - Agent-specific preamble content (optional)
 
 - **Transpilation:**
@@ -44,6 +45,11 @@ This repository manages agent command definitions and tooling that get distribut
   - `dist/claude/*` → `~/.claude/`
   - `dist/codex/*` → `~/.codex/`
   - `dist/gemini/*` → `~/.gemini/`
+
+Skills are distributed to:
+- Claude: `dist/claude/skills` → `~/.claude/skills`
+- Codex: `dist/codex/skills` → `~/.codex/skills`
+- Gemini: `dist/gemini/skills` → `~/.gemini/skills`
 
 ## Code Quality & Testing
 

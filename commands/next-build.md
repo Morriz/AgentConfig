@@ -88,6 +88,12 @@ Ready for review (Phase 5).
 
 ---
 
+## Step 6: Commit
+
+Commit all changes in the cwd (worktree).
+
+--- 
+
 ## Error Handling
 
 **If a task fails:**

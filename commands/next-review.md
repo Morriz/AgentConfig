@@ -48,25 +48,31 @@ git diff $(git merge-base HEAD main)..HEAD
 
 ---
 
-## Step 4: Dispatch Sub-Agents
+## Step 4: Parallel Skill-Based Review
 
-Based on changed files, dispatch relevant sub-agents in parallel:
+Use the skills below to cover each review aspect. When you can run tasks in parallel, do so: run
+each aspect in parallel and explicitly load the matching skill for that aspect. After all aspects
+finish, aggregate the findings into a single review.
 
-| Changed | Sub-agent to dispatch |
-|---------|----------------------|
-| Any code | `next-code-reviewer` |
-| Test files | `next-test-analyzer` |
-| Error handling | `next-silent-failure-hunter` |
-| Type definitions | `next-type-design-analyzer` |
-| Comments/docs | `next-comment-analyzer` |
+### Aspect → Skill → Task mapping
 
-Wait for all sub-agents to complete. Collect their findings.
+| Aspect | When to use | Skill trigger | Task to perform |
+|--------|-------------|---------------|-----------------|
+| code | Always | `next-code-reviewer` | Review code against project guidelines; find bugs, regressions, and pattern violations. |
+| tests | Test files changed | `next-test-analyzer` | Evaluate test coverage, edge cases, and test quality; note missing or weak tests. |
+| errors | Error handling changed | `next-silent-failure-hunter` | Detect silent failures, swallowed errors, bad fallbacks, missing logs. |
+| types | Types added/modified | `next-type-design-analyzer` | Validate type design, invariants, and unsafe or leaky abstractions. |
+| comments | Comments/docs added | `next-comment-analyzer` | Check comment accuracy, staleness, and misleading documentation. |
+| simplify | After other reviews pass | `next-code-simplifier` | Identify unnecessary complexity; propose simplifications without behavior changes. |
+
+When parallel execution is not available, load all listed skills yourself and complete the review
+with those skills active.
 
 ---
 
 ## Step 5: Aggregate Findings
 
-Combine sub-agent findings with your own observations. Write to `todos/{slug}/review-findings.md`:
+Combine findings from the skill-based review with your own observations. Write to `todos/{slug}/review-findings.md`:
 
 ```markdown
 # Code Review: {slug}
@@ -98,8 +104,6 @@ Combine sub-agent findings with your own observations. Write to `todos/{slug}/re
 
 - Positive observations
 
----
-
 ## Verdict
 
 **[ ] APPROVE** - Ready to merge
@@ -116,10 +120,21 @@ Priority fixes:
 
 ---
 
-## Step 6: Output
+## Step 6: Manage state
 
-- Write findings to `todos/{slug}/review-findings.md`
-- Report summary and verdict to the caller
+Update `todos/{slug}/state.json` by setting "review" to "approved" or "changes_requested"
+
+---
+
+## Step 7: Commit
+
+Commit all changes in the cwd (worktree).
+
+--- 
+
+## Step 8: Output
+
+Report summary and verdict to the caller
 
 ---
 
