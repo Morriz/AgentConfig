@@ -20,6 +20,7 @@ class AgentConfig(TypedDict):
     master_dest: str
     commands_dest_dir: str
     skills_dest_dir: str
+    skills_ext: str
     ext: str
     transform: Transform
     deploy_master_dest: NotRequired[str]
@@ -65,14 +66,10 @@ def transform_skill_to_claude(post: Post, name: str) -> str:
 
 def transform_skill_to_codex(post: Post, name: str) -> str:
     """Transform a skill post to Codex format."""
-    lines = ["---"]
     description = post.metadata.get("description", "")
-    lines.append(f'name: "{name}"')
-    lines.append(f'description: """{description}"""')
-    lines.append("---")
-    lines.append("")
-    lines.append(post.content)
-    return "\n".join(lines)
+    description_str = f'"""{description}"""'
+    content = post.content
+    return f'name = "{name}"\ndescription = {description_str}\nprompt = """\n{content}\n"""\n'
 
 
 def transform_skill_to_gemini(post: Post, name: str) -> str:
@@ -131,6 +128,7 @@ def main() -> None:
             "master_dest": os.path.join(dist_dir, "claude", "CLAUDE.md"),
             "commands_dest_dir": os.path.join(dist_dir, "claude", "commands"),
             "skills_dest_dir": os.path.join(dist_dir, "claude", "skills"),
+            "skills_ext": ".md",
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.claude"), "CLAUDE.md"),
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.claude"), "commands"),
             "deploy_skills_dest": os.path.join(os.path.expanduser("~/.claude"), "skills"),
@@ -143,6 +141,7 @@ def main() -> None:
             "master_dest": os.path.join(dist_dir, "codex", "CODEX.md"),
             "commands_dest_dir": os.path.join(dist_dir, "codex", "prompts"),
             "skills_dest_dir": os.path.join(dist_dir, "codex", "skills"),
+            "skills_ext": ".toml",
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.codex"), "CODEX.md"),
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.codex"), "prompts"),
             "deploy_skills_dest": os.path.join(os.path.expanduser("~/.codex"), "skills"),
@@ -155,6 +154,7 @@ def main() -> None:
             "master_dest": os.path.join(dist_dir, "gemini", "GEMINI.md"),
             "commands_dest_dir": os.path.join(dist_dir, "gemini", "commands"),
             "skills_dest_dir": os.path.join(dist_dir, "gemini", "skills"),
+            "skills_ext": ".toml",
             "deploy_master_dest": os.path.join(os.path.expanduser("~/.gemini"), "GEMINI.md"),
             "deploy_commands_dest": os.path.join(os.path.expanduser("~/.gemini"), "commands"),
             "deploy_skills_dest": os.path.join(os.path.expanduser("~/.gemini"), "skills"),
@@ -263,7 +263,7 @@ def main() -> None:
 
                     output_dir = os.path.join(config["skills_dest_dir"], skill_dir)
                     os.makedirs(output_dir, exist_ok=True)
-                    output_filename = f"SKILL{config['ext']}"
+                    output_filename = f"SKILL{config['skills_ext']}"
 
                     with open(
                         os.path.join(output_dir, output_filename),
