@@ -11,7 +11,7 @@ Slug given: "$ARGUMENTS"
 
 ---
 
-## Step 1: Load Context
+## Step 1.a: Load Context
 
 ```
 1. Read todos/{slug}/requirements.md
@@ -22,6 +22,13 @@ Slug given: "$ARGUMENTS"
 ```
 
 If either file is missing, STOP and report error.
+
+---
+
+## Step 1.b: Prepare Environment
+
+Figure out what environment you are in (Python, Node.js, etc) and ensure all dependencies are installed in the current worktree. 
+Don't forget to check for test or dev dependencies as well as those are needed for development.
 
 ---
 
