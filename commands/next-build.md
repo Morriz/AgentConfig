@@ -124,5 +124,3 @@ Commit all changes in the cwd (worktree).
 
 - You WILL implement ALL tasks in Groups 1-4
 - Do NOT push to remote (orchestrator handles merging)
-- You WILL ensure ALL linters and tests PASS before reporting completion
-- You WILL take ownership of code and fix ALL errors found, and NEVER blame others
