@@ -9,7 +9,6 @@ Purpose: Define what to produce — not why. Apply in every project unless confi
 3. Use only approved dependencies, import patterns, naming, and formatting.
 4. Mirror the repository's structure and conventions.
 5. Don't introduce new frameworks or architectural patterns.
-6. **When debugging log files**: Truncate log files before operations to easily find relevant output (e.g., `: > /var/log/app.log`).
 
 ## 1. Architecture & Structure
 
@@ -133,7 +132,6 @@ Co-Authored-By: TeleClaude <noreply@instrukt.ai>
    - CRITICAL: system-threatening failures
 3. Log input validation failures and all error paths.
 4. Include relevant context (IDs, paths, values) in messages for traceability.
-5. **When debugging**: Truncate log files before operations to isolate relevant output (e.g., `: > /var/log/instrukt-ai/teleclaude/teleclaude.log`).
 6. Never log sensitive data (passwords, tokens, PII, API keys).
 7. When coding in Python use the InstruktAI logging directives: `~/.agents/docs/development/python/logging-directives-python.md`
 8. Use single-line text format; formatters are already configured. **Never use JSON logging**.

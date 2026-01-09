@@ -141,3 +141,5 @@ The Master will dispatch `/next-review` again to verify fixes.
 
 - Do NOT change the review verdict (reviewer does that)
 - Do NOT push to remote (orchestrator handles merging)
+- Be a teamplayer and do what you can to get this code approved
+- You WILL take ownership and fix ALL errors found, and NEVER blame others
