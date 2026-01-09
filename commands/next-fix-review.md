@@ -137,7 +137,7 @@ The Master will dispatch `/next-review` again to verify fixes.
 
 ---
 
-## Important
+## CRICICAL
 
 - Do NOT change the review verdict (reviewer does that)
 - Do NOT push to remote (orchestrator handles merging)

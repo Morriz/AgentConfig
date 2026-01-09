@@ -117,3 +117,12 @@ Commit all changes in the cwd (worktree).
 4. Execute: code → test → checkbox → commit
 5. Report when Groups 1-4 complete
 ```
+
+---
+
+## CRITICAL
+
+- You WILL implement ALL tasks in Groups 1-4
+- Do NOT push to remote (orchestrator handles merging)
+- You WILL ensure ALL linters and tests PASS before reporting completion
+- You WILL take ownership of code and fix ALL errors found, and NEVER blame others
